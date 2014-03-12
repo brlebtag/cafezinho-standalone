@@ -177,7 +177,7 @@ IteradorTabelaSimbolo analise_semantica(TabelaSimbolo &tabela, No* no, int profu
 	{
 		NLeia *ler = dynamic_cast<NLeia*>(no);
 
-		ListaExpressao *list = dynamic_cast<NListaExpressoes*>(leia->expressao)->expressoes;
+		ListaExpressao *list = dynamic_cast<NListaExpressoes*>(ler->expressao)->expressoes;
 
 		for(IteradorExpressao it = list->begin(); it!= list->end(); ++it)
 		{
@@ -185,7 +185,7 @@ IteradorTabelaSimbolo analise_semantica(TabelaSimbolo &tabela, No* no, int profu
 			
 			if(CHECA_NO(r, CAST))
 			{
-				No* r1 = ultimo_parametro(tabela, dynamic_cast<NCast*>(expressao));
+				No* r1 = ultimo_parametro(tabela, dynamic_cast<NCast*>(r)->expressao);
 
 				if(NCHECA_NO(r1, IDENTIFICADOR_ESCALAR)&&NCHECA_NO(r, IDENTIFICADOR_VETORIAL))
 				{
@@ -216,7 +216,7 @@ IteradorTabelaSimbolo analise_semantica(TabelaSimbolo &tabela, No* no, int profu
 
 			if(tipo == TIPO_ERRO || tipo == TIPO_NULO)
 			{
-				cout<<"ERRO SEMANTICO NAO REALIZAR ESTA OPERACAO ENCONTRADO "<<nome_tipo(tipo)<<" PROXIMO A "<<ler->linha<<"\n";
+				cout<<"ERRO SEMANTICO NAO REALIZAR ESTA OPERACAO ENCONTRADO "<<nome_tipo(tipo)<<" PROXIMO A "<<escreve->linha<<"\n";
 				erro_compilador = true;
 			}
 		}

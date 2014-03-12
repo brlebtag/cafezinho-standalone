@@ -22,7 +22,7 @@ public:
     CelulaMemoria operator+(const CelulaMemoria &rhs);
     CelulaMemoria operator+(const int &rhs);
     CelulaMemoria operator-(const CelulaMemoria &rhs);
-    void operator-();
+    CelulaMemoria operator-() const;
     CelulaMemoria operator*(const CelulaMemoria &rhs);
     CelulaMemoria operator/(const CelulaMemoria &rhs);
     CelulaMemoria operator&(const CelulaMemoria &rhs);

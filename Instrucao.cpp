@@ -863,44 +863,41 @@ void IBoolean::execute()
     ++vm.pc;
 }
 
-IPotencia(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
+IPotencia::IPotencia(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
     : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
 {
 
 }
-void execute()
+void IPotencia::execute()
 {
     registrador = operando1.pot(operando2);
     ++vm.pc;
 }
 
-IPotenciaIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
+IPotenciaIm::IPotenciaIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
     : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
 {
 
 }
-void execute()
+void IPotenciaIm::execute()
 {
     registrador = operando1.pot(operando2);
     ++vm.pc;
 }
 
 
-ICast(MaquinaVirtual &vm, Celula &registrador, TipoVariavel::TipoVariavel tipo)
-    : Instrucao(vm), registrador(registrador), tipo(tipo)
-{
-
-}
-void execute()
+ICast::ICast(MaquinaVirtual &vm, Celula &registrador, TipoVariavel::TipoVariavel tipo)
+    : Instrucao(vm), registrador(registrador), tipo(tipo) { }
+void ICast::execute()
 {
     if(tipo == TipoVariavel::TIPO_INT || tipo == TipoVariavel::TIPO_CAR)
     {
-        if(registrador.tipo == REAL)
+        if(registrador.tipo == CelulaMemoria::REAL)
             registrador.convToInt();
     }
     else
     {
-        if(registrador.tipo == INTEIRO)
+        if(registrador.tipo == CelulaMemoria::INTEIRO)
             registrador.convToDouble();
     }
     ++vm.pc;

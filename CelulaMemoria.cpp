@@ -131,16 +131,20 @@ CelulaMemoria CelulaMemoria::operator-(const CelulaMemoria &rhs)
     return r;
 }
 
-void operator-()
+CelulaMemoria CelulaMemoria::operator-() const
 {
+    CelulaMemoria m;
+
     if( this->tipo == REAL )
     {
-        this->celula.real = - rhs.celula.real;
+        m.celula.real = - this->celula.real;
     }
     else
     {
-        this->celula.inteiro = - rhs.celula.inteiro;
+        m.celula.inteiro = - this->celula.inteiro;
     }
+
+    return m;
 }
 
 CelulaMemoria CelulaMemoria::operator*(const CelulaMemoria &rhs)
