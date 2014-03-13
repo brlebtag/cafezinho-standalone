@@ -26,7 +26,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				vm.rotulo.push_back(0);
 				//Variaveis Globais
 				for(IteradorInstrucao it = bloco->instrucoes->begin(); it!= bloco->instrucoes->end(); ++it)
-				9{
+				{
 					if(CHECA_NO((*it), TipoNo::DECLARACAO_VARIAVEL_ESCALAR) || CHECA_NO((*it), TipoNo::DECLARACAO_VARIAVEL_VETORIAL))
 					{
 						Alocado resultado = alocar_variavel(vm, tabela, (*it), profundidade, offset + i);

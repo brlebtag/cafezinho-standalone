@@ -35,7 +35,7 @@ void gerar_indice(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 	int j = var->dimensoes->size() -1;
 
 	//Se for diferente de 1 dimensão
-	if(j>0)
+	if(j>1)
 		vm.codigo.push_back(new IMove(vm, vm.ebx, vm.eax));
 	
 	for(int i = ident->indice->size()-2; i>=0; --i, --j)
@@ -46,7 +46,7 @@ void gerar_indice(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 		vm.codigo.push_back(new IAdc(vm, vm.ebx, vm.eax, vm.ebx));
 	}
 	//Se for diferente de 1 dimensão
-	if(j>0)
+	if(j>1)
 		vm.codigo.push_back(new IMove(vm, vm.eax, vm.ebx));
 }
 
