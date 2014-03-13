@@ -13,7 +13,7 @@ bool checar_chamada(TabelaSimbolo &tabela, No* parametro, No* argumento)
 		NDeclVarVetorial *param = dynamic_cast<NDeclVarVetorial*>(parametro);
 		No* no = ultimo_parametro(tabela, argumento);
 
-		if(!CHECA_NO(no, IDENTIFICADOR_ESCALAR))
+		if(NCHECA_NO(no, IDENTIFICADOR_ESCALAR))
 		{
 			cout<<"ERRO SEMANTICO ESPERADO VARIAVEL VETORIAL ENCONTRADO "<<tipo_no(no)<<" PROXIMO A "<<argumento->linha<<"\n";
 			erro_compilador = true;

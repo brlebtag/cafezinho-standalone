@@ -49,6 +49,7 @@ public:
     double toDouble();
     void convToInt();
     void convToDouble();
+    void convToChar();
     union
     {
         int inteiro;

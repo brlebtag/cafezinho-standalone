@@ -385,6 +385,12 @@ void CelulaMemoria::convToDouble()
     this->tipo = REAL; 
 }
 
+void CelulaMemoria::convToChar()
+{
+    this->celula.inteiro = ((int)((char)this->celula.inteiro));
+    this->tipo = INTEIRO;
+}
+
 CelulaMemoria CelulaMemoria::pot(const CelulaMemoria &rhs)
 {
     CelulaMemoria m;

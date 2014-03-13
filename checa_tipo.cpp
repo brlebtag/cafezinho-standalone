@@ -215,7 +215,7 @@ TipoVariavel::TipoVariavel checar_tipo(TabelaSimbolo &tabela, No* no)
 				}
 				else if(atrib->op==MULT_ATRIBUICAO||atrib->op==ADICAO_ATRIBUICAO||atrib->op==SUBTRACAO_ATRIBUICAO)
 				{
-					//REAL > INT E INT > CAR
+					//CAR > INT > REAL
 					if(lhs!=TIPO_REAL&&rhs==TIPO_REAL)
 						atrib->tipo = TIPO_ERRO;
 

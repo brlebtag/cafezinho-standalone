@@ -12,20 +12,29 @@ int main(int argc, char *argv[])
 	if(argc>1)
 	{
 		FILE *myfile = fopen(argv[1], "r");
+		
 		if (!myfile) {
 			return -1;
 		}
+		
 		yyin = myfile;
+		
 		NBloco *bloco;
+		
 		do {
+		
 			bloco = new NBloco(0);
+		
 			yyparse(bloco);
+		
 		} while (!feof(yyin));
-		if(!erro_compilador)
+
+		/*if(!erro_compilador)
 		{
 			TabelaSimbolo tabela;
+
 			analise_semantica(tabela, bloco, 0, 0);
-		}
+		}*/
 		if(!erro_compilador)
 		{	
 			cout<<"COMPILADO!\n";

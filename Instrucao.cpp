@@ -890,15 +890,17 @@ ICast::ICast(MaquinaVirtual &vm, Celula &registrador, TipoVariavel::TipoVariavel
     : Instrucao(vm), registrador(registrador), tipo(tipo) { }
 void ICast::execute()
 {
-    if(tipo == TipoVariavel::TIPO_INT || tipo == TipoVariavel::TIPO_CAR)
+    if(tipo == TipoVariavel::TIPO_INT)
     {
-        if(registrador.tipo == CelulaMemoria::REAL)
-            registrador.convToInt();
+        registrador.convToInt();
+    }
+    else if(tipo == TipoVariavel::TIPO_CAR)
+    {
+        registrador.convToChar();
     }
     else
     {
-        if(registrador.tipo == CelulaMemoria::INTEIRO)
-            registrador.convToDouble();
+        registrador.convToDouble();
     }
     ++vm.pc;
 }
