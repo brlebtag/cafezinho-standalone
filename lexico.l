@@ -122,7 +122,7 @@ OC [0-7]
 					}
 					if( c == '\"')
 					{
-						yylval.sval = new string(yytext) ;
+						yylval.sval = new string(val) ;
 						ultimo_token = "PALAVRA LITERAL";
 						return PALAVRA_LITERAL;
 						break;

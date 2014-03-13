@@ -109,7 +109,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				//offset da funcao será a posicao do vm.roluto. O vm.roluto guarda a posicao da primeira instrucao de Func()...
 				//precisa ser assim por que tabela insere e remove seus elementos logo ira perder a informacao do inicio de func()
 				//mas o rotulo sempre existe enquato o programa existir...
-				if(func->nome->compare("programa")==0)
+				if(func->nome->compare("programa")==0&&func->tipo==TipoVariavel::TIPO_NULO)
 				{
 					vm.rotulo[0] = vm.codigo.size()-1;
 					pilha.push(Referencia(no, profundidade, 0));
@@ -125,7 +125,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 			else
 			{
 				//offset da funcao será a posicao da primeira instrucao da funcao dentro de codigo[]
-				if(func->nome->compare("programa")==0)
+				if(func->nome->compare("programa")==0&&func->tipo==TipoVariavel::TIPO_NULO)
 				{
 					vm.rotulo[0] = vm.codigo.size()-1;
 					it->second.push(Referencia(no, profundidade, 0, false));
@@ -166,7 +166,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 			{
 				move(vm, vm.pp, vm.bp);
 				carrega(vm, vm.er, vm.pp);
-				dec_pp(vm, quantidade_alocada(funcao));
+				dec_pp(vm, quantidade_alocada(func));
 				dec_pp(vm, 1);
 				carrega(vm, vm.bp, vm.pp);
 				ret(vm);

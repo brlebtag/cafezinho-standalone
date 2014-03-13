@@ -36,15 +36,7 @@ MaquinaVirtual::~MaquinaVirtual()
 void MaquinaVirtual::executar()
 {
     execute = true;
-}
 
-void MaquinaVirtual::parar()
-{
-    execute = false;
-}
-
-void MaquinaVirtual::rodar()
-{
     while(execute&&(!erf))
     {
         codigo[pc]->execute();
@@ -54,6 +46,11 @@ void MaquinaVirtual::rodar()
             erf = true;
         }
     }
+}
+
+void MaquinaVirtual::parar()
+{
+    execute = false;
 }
 
 void MaquinaVirtual::passo()

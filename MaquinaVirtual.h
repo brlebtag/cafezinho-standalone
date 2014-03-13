@@ -17,7 +17,6 @@ public:
     virtual ~MaquinaVirtual();
     void executar();
     void parar();
-    void rodar();
     void passo();
     int pc; //Contator de programa
     CelulaMemoria pp; //Ponteiro da pilha
