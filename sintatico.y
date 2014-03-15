@@ -79,7 +79,7 @@ bool checa_vetor(ListaExpressao *dimensao, ListaExpressao *lista, int indice, in
 %start programa
 
 %type<listInstr> unidade_traducao lista_instrucao declaracao_externa lista_declaracao inicio_declarador inicio_lista_declaracao declaracao
-%type<inst> definicao_funcao instrucao instrucao_expressao 
+%type<inst> instrucao instrucao_expressao 
 %type<inst> instrucao_decisao instrucao_iteracao instrucao_entrada_saida instrucao_salto
 %type<tipoVar> tipo_especificador
 %type<declFunc> declarador_funcao
@@ -114,12 +114,26 @@ unidade_traducao
 	;
 
 declaracao_externa
-	: definicao_funcao { $$ = new ListaInstrucao(); $$->push_back($1); }
-	| lista_declaracao { $$ = $1; }
-	; 
-
-definicao_funcao
-	: tipo_especificador declarador_funcao instrucao_composta { $2->tipo = $1; $2->bloco = $3; $$ = $2; }
+	: tipo_especificador declarador_funcao instrucao_composta 
+	{ 
+		$2->tipo = $1; 
+		$2->bloco = $3; 
+		$$ = new ListaInstrucao(); 
+		$$->push_back($2); 
+	}
+	| tipo_especificador inicio_lista_declaracao ';'
+	{
+		for(ListaInstrucao::iterator it = $2->begin(); it!= $2->end(); ++it)
+		{
+			No* no = dynamic_cast<No*>(*it);
+			if(no->tipoNo()==TipoNo::DECLARACAO_VARIAVEL_ESCALAR||no->tipoNo()==TipoNo::DECLARACAO_VARIAVEL_VETORIAL)
+			{
+				NDeclaracaoVariavel *var = dynamic_cast<NDeclaracaoVariavel*>(no);
+				var->tipo = $1;
+			}
+		}
+		$$ = $2;
+	}
 	;
 
 tipo_especificador

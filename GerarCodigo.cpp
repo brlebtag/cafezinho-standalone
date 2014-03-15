@@ -44,7 +44,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 					dec_pp(vm, i-1);
 				vm.codigo.push_back(new IParar(vm));
 
-				//Funcoes..
+				//Funcoes.. ou atribuicoes...
 				for(IteradorInstrucao it = bloco->instrucoes->begin(); it!= bloco->instrucoes->end(); ++it)
 				{
 					if(NCHECA_NO((*it), TipoNo::DECLARACAO_VARIAVEL_ESCALAR) && NCHECA_NO((*it), TipoNo::DECLARACAO_VARIAVEL_VETORIAL))
