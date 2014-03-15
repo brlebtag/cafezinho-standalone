@@ -8,7 +8,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 		{
 			NBloco *bloco = dynamic_cast<NBloco*>(no);
 			RemoverRef remover;
-			int i = 0;
+			int i = 1;
 
 			if(profundidade == 0)
 			{
@@ -35,11 +35,13 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 					}
 				}
 
+				//empilho o ponteiro da base da pilha(que funciona como o ponteiro que aponta para o inicio do frame...)
+				empilha(vm, vm.bp);
 				//chama main...
 				invoca(vm, vm.rotulo[0]);
 				vm.rotulo[1] = vm.codigo.size();
-				if(i>0)
-					dec_pp(vm, i);
+				if(i>1)
+					dec_pp(vm, i-1);
 				vm.codigo.push_back(new IParar(vm));
 
 				//Funcoes..
@@ -58,7 +60,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				{
 					if(CHECA_NO((*it), TipoNo::BLOCO))
 					{
-						gerar_codigo(vm, tabela, (*it), profundidade +1, offset + i, funcao);
+						gerar_codigo(vm, tabela, (*it), profundidade +1, offset + i -1, funcao);
 					}
 					else if(CHECA_NO((*it), TipoNo::DECLARACAO_VARIAVEL_ESCALAR) || CHECA_NO((*it), TipoNo::DECLARACAO_VARIAVEL_VETORIAL))
 					{
@@ -68,7 +70,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 					}
 					else
 					{
-						gerar_codigo(vm, tabela, (*it), profundidade, offset + i, funcao);
+						gerar_codigo(vm, tabela, (*it), profundidade, offset + i -1 , funcao);
 					}
 				}
 			}
@@ -86,8 +88,8 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 			}
 
 			//desalocar variaveis locais alocadas...
-			if(i>0&&profundidade>0)
-				dec_pp(vm, i);
+			if(i>1&&profundidade>0)
+				dec_pp(vm, i-1);
 		}
 		break;
 		case TipoNo::DECLARACAO_FUNCAO:
@@ -138,7 +140,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 			}
 
 			// push er
-			empilha(vm, vm.er);
+			vm.codigo.push_back(new ISalva(vm, vm.er, vm.pp));
 
 			//Empilha de trás para frente...
 			for(int i= func->parametros->size()-1; i>=0; --i)
@@ -166,7 +168,11 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 			{
 				move(vm, vm.pp, vm.bp);
 				carrega(vm, vm.er, vm.pp);
-				dec_pp(vm, quantidade_alocada(func));
+				int qtd = quantidade_alocada(func);
+				if(qtd>0) 
+				{
+					dec_pp(vm, qtd);
+				}
 				dec_pp(vm, 1);
 				carrega(vm, vm.bp, vm.pp);
 				ret(vm);
@@ -527,7 +533,8 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 			// lhs = rhs
 			gerar_codigo(vm, tabela, ultimo_elemento(vm,tabela, atr->rhs, profundidade, offset, funcao), profundidade, offset, funcao);
 
-			empilha(vm, vm.eax);
+			if(atr->op!=Operador::ATRIBUICAO_OP)
+				empilha(vm, vm.eax);
 
 			No *r = ultimo_elemento(vm,tabela, atr->lhs, profundidade, offset, funcao);
 
@@ -537,7 +544,10 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				gerar_codigo(vm, tabela, r, profundidade, offset, funcao);
 			}
 
-			desempilha(vm, vm.ebx);
+			if(atr->op!=Operador::ATRIBUICAO_OP)
+				desempilha(vm, vm.ebx);
+			else
+				move(vm, vm.ebx, vm.eax);
 			
 			switch(atr->op)
 			{
@@ -608,7 +618,11 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 			gerar_codigo(vm, tabela, ultimo_elemento(vm,tabela, retorno->expressao, profundidade, offset, funcao), profundidade, offset, funcao);
 			move(vm, vm.pp, vm.bp);
 			carrega(vm, vm.er, vm.pp);
-			dec_pp(vm, quantidade_alocada(funcao));
+			int qtd = quantidade_alocada(funcao);
+			if(qtd>0) 
+			{
+				dec_pp(vm, qtd);
+			}
 			dec_pp(vm, 1);
 			carrega(vm, vm.bp, vm.pp);
 			ret(vm);
@@ -620,9 +634,9 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 
 			ListaExpressao *list = dynamic_cast<NListaExpressoes*>(leia->expressao)->expressoes;
 
-			for(IteradorExpressao it = list->begin(); it!= list->end(); ++it)
+			for(int i = 0; i<list->size(); ++i)
 			{
-				No * r = ultimo_elemento(vm,tabela, (*it), profundidade, offset, funcao);
+				No * r = ultimo_elemento(vm,tabela, list->at(i), profundidade, offset, funcao);
 
 				if(CHECA_NO(r, TipoNo::CAST))
 				{
@@ -658,9 +672,9 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 
 			ListaExpressao *list = dynamic_cast<NListaExpressoes*>(escreva->expressao)->expressoes;
 
-			for(IteradorExpressao it = list->begin(); it!= list->end(); ++it)
+			for(int i = 0; i<list->size(); ++i)
 			{
-				No * r = ultimo_elemento(vm,tabela, (*it), profundidade, offset, funcao);
+				No * r = ultimo_elemento(vm,tabela, list->at(i), profundidade, offset, funcao);
 				gerar_codigo(vm, tabela, r, profundidade, offset, funcao);
 
 				switch(dynamic_cast<NExpressao*>(r)->tipo)
@@ -677,7 +691,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 					break;
 					case TipoVariavel::TIPO_REAL:
 					{
-						vm.codigo.push_back(new ILeituraReal(vm, vm.eax));
+						vm.codigo.push_back(new IEscritaDouble(vm, vm.eax));
 					}
 					break;
 				}
@@ -688,26 +702,23 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 		{
 			NListaExpressoes *list = dynamic_cast<NListaExpressoes*>(no);
 			
-			for(IteradorExpressao it = list->expressoes->begin(); it != list->expressoes->end(); ++it)
+			for(int i = 0; i<list->expressoes->size(); ++i)
 			{
-				gerar_codigo(vm, tabela, (*it), profundidade, offset, funcao);
+				gerar_codigo(vm, tabela, list->expressoes->at(i), profundidade, offset, funcao);
 			}
 		}
 		break;
 		case TipoNo::INICIALIZADOR_VETOR:
 		{
 			NInicializadorVetor *list = dynamic_cast<NInicializadorVetor*>(no);
-
-			IteradorTabelaRef itIdent = tabela.find(list->nome->c_str());
-			Referencia ref = itIdent->second.top();
-
-			gerar_inicializador(vm, tabela, list->init, profundidade, ref.offset, funcao);
+			gerar_inicializador(vm, tabela, list, profundidade, offset, funcao);
 
 		}
 		break;
 		case TipoNo::NOVA_LINHA:
 		{
 			NNovaLinha *novalinha = dynamic_cast<NNovaLinha*>(no);
+			
 			// echo palavra
 			vm.codigo.push_back(new IEscritaPalavraIm(vm, novalinha->valor));
 		}
@@ -722,21 +733,21 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 		{
 			NInteiro *cons = dynamic_cast<NInteiro*>(no);
 			// mv eax, IMM
-			vm.codigo.push_back(new IMoveIm(vm, vm.eax, CelulaMemoria(cons->valor)));
+			vm.codigo.push_back(new IMoveIm(vm, vm.eax, cons->valor));
 		}
 		break;
 		case TipoNo::CARACTER:
 		{
 			NCaracter *cons = dynamic_cast<NCaracter*>(no);
 			// mv eax, IMM
-			vm.codigo.push_back(new IMoveIm(vm, vm.eax, CelulaMemoria(cons->valor)));
+			vm.codigo.push_back(new IMoveIm(vm, vm.eax, cons->valor));
 		}
 		break;
 		case TipoNo::REAL:
 		{
 			NReal *cons = dynamic_cast<NReal*>(no);
 			// mv eax, IMM
-			vm.codigo.push_back(new IMoveIm(vm, vm.eax, CelulaMemoria(cons->valor)));
+			vm.codigo.push_back(new IMoveIm(vm, vm.eax, cons->valor));
 		}
 		break;
 		case TipoNo::PALAVRA_LITERAL:

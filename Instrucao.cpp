@@ -22,16 +22,32 @@ void IMove::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao IMove::tipoInstucao()
+{
+    return TipoInstrucao::MOVE;
+}
 
 IMoveIm::IMoveIm(MaquinaVirtual &vm, Celula &para, Celula de)
-    : Instrucao(vm), registrador1(para), registrador2(de)
-{
+    : Instrucao(vm), registrador1(para), registrador2(de) { }
 
-}
+IMoveIm::IMoveIm(MaquinaVirtual &vm, Celula &para, char de)
+    : Instrucao(vm), registrador1(para), registrador2(de) { }
+
+IMoveIm::IMoveIm(MaquinaVirtual &vm, Celula &para, int de)
+    : Instrucao(vm), registrador1(para), registrador2(de) { }
+
+IMoveIm::IMoveIm(MaquinaVirtual &vm, Celula &para, double de)
+    : Instrucao(vm), registrador1(para), registrador2(de) { }
+
 void IMoveIm::execute()
 {
     registrador1 = registrador2;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao IMoveIm::tipoInstucao()
+{
+    return TipoInstrucao::MOVE_IM;
 }
 
 ISalto::ISalto(MaquinaVirtual &vm, int &offset)
@@ -48,6 +64,10 @@ void ISalto::execute()
     vm.pc = offset;
 }
 
+TipoInstrucao::TipoInstrucao ISalto::tipoInstucao()
+{
+    return TipoInstrucao::MOVE_IM;
+}
 
 IAdc::IAdc(MaquinaVirtual &vm, Celula& registrador, Celula& operando1, Celula& operando2)
     : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
@@ -58,6 +78,11 @@ void IAdc::execute()
 {
     registrador = operando1 + operando2;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao IAdc::tipoInstucao()
+{
+    return TipoInstrucao::ADC;
 }
 
 ISub::ISub(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
@@ -71,6 +96,11 @@ void ISub::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao ISub::tipoInstucao()
+{
+    return TipoInstrucao::SUB;
+}
+
 
 IMult::IMult(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
     : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
@@ -81,6 +111,11 @@ void IMult::execute()
 {
     registrador = operando1 * operando2;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao IMult::tipoInstucao()
+{
+    return TipoInstrucao::MULT;
 }
 
 
@@ -99,6 +134,11 @@ void IDiv::execute()
     }
     registrador = operando1 / operando2;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao IDiv::tipoInstucao()
+{
+    return TipoInstrucao::DIV;
 }
 
 
@@ -130,11 +170,13 @@ void ICmp::execute()
     ++vm.pc;
 }
 
-ICmpIm::ICmpIm(MaquinaVirtual &vm, Celula &operando1, Celula operando2)
-    : Instrucao(vm), operando1(operando1), operando2(operando2)
+TipoInstrucao::TipoInstrucao ICmp::tipoInstucao()
 {
-
+    return TipoInstrucao::CMP;
 }
+
+ICmpIm::ICmpIm(MaquinaVirtual &vm, Celula &operando1, Celula operando2)
+    : Instrucao(vm), operando1(operando1), operando2(operando2) { }
 void ICmpIm::execute()
 {
     if(operando1 > operando2)
@@ -158,16 +200,15 @@ void ICmpIm::execute()
     ++vm.pc;
 }
 
-
+TipoInstrucao::TipoInstrucao ICmpIm::tipoInstucao()
+{
+    return TipoInstrucao::CMP_IM;
+}
 
 ISaltoEq::ISaltoEq(MaquinaVirtual &vm, int &offset)
-    : ISalto(vm, offset)
-{
-}
+    : ISalto(vm, offset) { }
 
-ISaltoEq::~ISaltoEq()
-{
-}
+ISaltoEq::~ISaltoEq() { }
 
 void ISaltoEq::execute()
 {
@@ -175,6 +216,11 @@ void ISaltoEq::execute()
         ISalto::execute();
     else
         ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao ISaltoEq::tipoInstucao()
+{
+    return TipoInstrucao::SALTO_EQ;
 }
 
 ISaltoMaior::ISaltoMaior(MaquinaVirtual &vm, int &offset)
@@ -186,13 +232,17 @@ ISaltoMaior::~ISaltoMaior()
 {
 }
 
-
 void ISaltoMaior::execute()
 {
     if(vm.bf)
         ISalto::execute();
     else
         ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao ISaltoMaior::tipoInstucao()
+{
+    return TipoInstrucao::SALTO_MAIOR;
 }
 
 ISaltoNaoEq::ISaltoNaoEq(MaquinaVirtual &vm, int &offset)
@@ -212,6 +262,10 @@ void ISaltoNaoEq::execute()
         ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao ISaltoNaoEq::tipoInstucao()
+{
+    return TipoInstrucao::SALTO_NAO_EQ;
+}
 
 ISaltoMaiorEq::ISaltoMaiorEq(MaquinaVirtual &vm, int &offset)
     : ISalto(vm, offset)
@@ -230,6 +284,10 @@ void ISaltoMaiorEq::execute()
         ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao ISaltoMaiorEq::tipoInstucao()
+{
+    return TipoInstrucao::SALTO_MAIOR_EQ;
+}
 
 ISaltoMenor::ISaltoMenor(MaquinaVirtual &vm, int &offset)
     : ISalto(vm, offset)
@@ -249,6 +307,11 @@ void ISaltoMenor::execute()
         ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao ISaltoMenor::tipoInstucao()
+{
+    return TipoInstrucao::SALTO_MENOR;
+}
+
 ISaltoMenorEq::ISaltoMenorEq(MaquinaVirtual &vm, int &offset)
     : ISalto(vm, offset)
 {
@@ -266,6 +329,11 @@ void ISaltoMenorEq::execute()
         ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao ISaltoMenorEq::tipoInstucao()
+{
+    return TipoInstrucao::SALTO_MENOR_EQ;
+}
+
 IParar::IParar(MaquinaVirtual &vm)
     : Instrucao(vm)
 {
@@ -277,11 +345,13 @@ void IParar::execute()
     vm.parar();
 }
 
+TipoInstrucao::TipoInstrucao IParar::tipoInstucao()
+{
+    return TipoInstrucao::PARAR;
+}
 
 IChamada::IChamada(MaquinaVirtual &vm, int &offset)
-    : ISalto(vm, offset)
-{
-}
+    : ISalto(vm, offset) { }
 
 void IChamada::execute()
 {
@@ -289,6 +359,10 @@ void IChamada::execute()
     ISalto::execute();
 }
 
+TipoInstrucao::TipoInstrucao IChamada::tipoInstucao()
+{
+    return TipoInstrucao::CHAMADA;
+}
 
 ILeituraInt::ILeituraInt(MaquinaVirtual &vm, Celula &m)
     : Instrucao(vm), m(m)
@@ -301,6 +375,10 @@ void ILeituraInt::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao ILeituraInt::tipoInstucao()
+{
+    return TipoInstrucao::LEITURA_INT;
+}
 
 ILeituraCar::ILeituraCar(MaquinaVirtual &vm, Celula &m)
     : Instrucao(vm), m(m)
@@ -312,6 +390,11 @@ void ILeituraCar::execute()
 
     m = vm.leChar();
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao ILeituraCar::tipoInstucao()
+{
+    return TipoInstrucao::LEITURA_CAR;
 }
 
 ILeituraReal::ILeituraReal(MaquinaVirtual &vm, Celula &m)
@@ -326,6 +409,10 @@ void ILeituraReal::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao ILeituraReal::tipoInstucao()
+{
+    return TipoInstrucao::LEITURA_REAL;
+}
 
 ICarrega::ICarrega(MaquinaVirtual &vm, Celula &registrador, Celula &offset, int desl)
     : Instrucao(vm), registrador(registrador), offset(offset), desl(desl)
@@ -335,17 +422,30 @@ ICarrega::ICarrega(MaquinaVirtual &vm, Celula &registrador, Celula &offset, int 
 void ICarrega::execute()
 {
     Celula acessa = offset+desl;
-    if(vm.memoria.capacity()<acessa.toInt())
-        vm.memoria.reserve(acessa.toInt()+10);
+    if(vm.memoria.capacity()<=acessa.toInt())
+        vm.memoria.reserve(acessa.toInt()+100);
     if(acessa.toInt()<0)
     {
         vm.erf = true;
         cout<<"ACESSO INDEVIDO DE MEMORIA: ERRO DE SEGMENTACAO\n";
     }
-    registrador = vm.memoria[acessa.toInt()];
+    try
+    {
+        registrador = vm.memoria[acessa.toInt()];
+    }
+    catch(exception &e)
+    {
+        vm.erf = true;
+        cout<<"ACESSO INDEVIDO DE MEMORIA: ERRO DE SEGMENTACAO\n";
+    }
+
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao ICarrega::tipoInstucao()
+{
+    return TipoInstrucao::CARREGA;
+}
 
 ISalva::ISalva(MaquinaVirtual &vm, Celula &registrador, Celula &offset, int desl)
     : Instrucao(vm), registrador(registrador), offset(offset), desl(desl)
@@ -355,15 +455,28 @@ ISalva::ISalva(MaquinaVirtual &vm, Celula &registrador, Celula &offset, int desl
 void ISalva::execute()
 {
     Celula acessa = offset+desl;
-    if(vm.memoria.capacity()<acessa.toInt())
-        vm.memoria.reserve(acessa.toInt()+10);
+    if(vm.memoria.capacity()<=acessa.toInt())
+        vm.memoria.reserve(acessa.toInt()+100);
     if(acessa.toInt()<0)
     {
         vm.erf = true;
         cout<<"ACESSO INDEVIDO DE MEMORIA: ERRO DE SEGMENTACAO\n";
     }
-    vm.memoria[acessa.toInt()] = registrador;
+    try
+    {
+        vm.memoria[acessa.toInt()] = registrador;
+    }
+    catch(exception &e)
+    {
+        vm.erf = true;
+        cout<<"ACESSO INDEVIDO DE MEMORIA: ERRO DE SEGMENTACAO\n";
+    }
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao ISalva::tipoInstucao()
+{
+    return TipoInstrucao::SALVA;
 }
 
 IEBit::IEBit(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
@@ -377,6 +490,11 @@ void IEBit::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao IEBit::tipoInstucao()
+{
+    return TipoInstrucao::E_BIT;
+}
+
 IEBitIm::IEBitIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
     : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
 {
@@ -388,6 +506,10 @@ void IEBitIm::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao IEBitIm::tipoInstucao()
+{
+    return TipoInstrucao::E_BIT_IM;
+}
 
 IOuBit::IOuBit(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
     : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
@@ -398,6 +520,11 @@ void IOuBit::execute()
 {
     registrador = operando1 | operando2;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao IOuBit::tipoInstucao()
+{
+    return TipoInstrucao::OU_BIT;
 }
 
 IOuBitIm::IOuBitIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
@@ -411,6 +538,10 @@ void IOuBitIm::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao IOuBitIm::tipoInstucao()
+{
+    return TipoInstrucao::OU_BIT_IM;
+}
 
 IXorBit::IXorBit(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
     : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
@@ -421,6 +552,11 @@ void IXorBit::execute()
 {
     registrador = operando1 ^ operando2;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao IXorBit::tipoInstucao()
+{
+    return TipoInstrucao::XOR_BIT;
 }
 
 IXorBitIm::IXorBitIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
@@ -434,6 +570,10 @@ void IXorBitIm::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao IXorBitIm::tipoInstucao()
+{
+    return TipoInstrucao::XOR_BIT_IM;
+}
 
 IShiftDir::IShiftDir(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
     : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
@@ -446,6 +586,10 @@ void IShiftDir::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao IShiftDir::tipoInstucao()
+{
+    return TipoInstrucao::SHIFT_DIR;
+}
 
 IShiftEsq::IShiftEsq(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
     : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
@@ -458,12 +602,13 @@ void IShiftEsq::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao IShiftEsq::tipoInstucao()
+{
+    return TipoInstrucao::SHIFT_ESQ;
+}
 
 ILigMaiorQ::ILigMaiorQ(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
-    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
-{
-
-}
+    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2) { }
 
 void ILigMaiorQ::execute()
 {
@@ -474,11 +619,13 @@ void ILigMaiorQ::execute()
     ++vm.pc;
 }
 
-ILigMaiorQIm::ILigMaiorQIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
-    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
+TipoInstrucao::TipoInstrucao ILigMaiorQ::tipoInstucao()
 {
-
+    return TipoInstrucao::LIG_MAIOR_QUE;
 }
+
+ILigMaiorQIm::ILigMaiorQIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
+    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2) { }
 
 void ILigMaiorQIm::execute()
 {
@@ -489,11 +636,13 @@ void ILigMaiorQIm::execute()
     ++vm.pc;
 }
 
-ILigMenorQ::ILigMenorQ(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
-    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
+TipoInstrucao::TipoInstrucao ILigMaiorQIm::tipoInstucao()
 {
-
+    return TipoInstrucao::LIG_MAIOR_QUE_IM;
 }
+
+ILigMenorQ::ILigMenorQ(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
+    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2) { }
 
 void ILigMenorQ::execute()
 {
@@ -502,6 +651,11 @@ void ILigMenorQ::execute()
     else
         registrador = 0;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao ILigMenorQ::tipoInstucao()
+{
+    return TipoInstrucao::LIG_MENOR_QUE;
 }
 
 ILigMenorQIm::ILigMenorQIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
@@ -516,6 +670,11 @@ void ILigMenorQIm::execute()
     else
         registrador = 0;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao ILigMenorQIm::tipoInstucao()
+{
+    return TipoInstrucao::LIG_MENOR_QUE_IM;
 }
 
 ILigMaiorEq::ILigMaiorEq(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
@@ -533,11 +692,13 @@ void ILigMaiorEq::execute()
     ++vm.pc;
 }
 
-ILigMaiorEqIm::ILigMaiorEqIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
-    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
+TipoInstrucao::TipoInstrucao ILigMaiorEq::tipoInstucao()
 {
-
+    return TipoInstrucao::LIG_MAIOR_EQ;
 }
+
+ILigMaiorEqIm::ILigMaiorEqIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
+    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2) { }
 
 void ILigMaiorEqIm::execute()
 {
@@ -548,11 +709,14 @@ void ILigMaiorEqIm::execute()
     ++vm.pc;
 }
 
-ILigMenorEq::ILigMenorEq(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
-    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
+TipoInstrucao::TipoInstrucao ILigMaiorEqIm::tipoInstucao()
 {
-
+    return TipoInstrucao::LIG_MAIOR_EQ_IM;
 }
+
+
+ILigMenorEq::ILigMenorEq(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
+    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2) { }
 
 void ILigMenorEq::execute()
 {
@@ -561,6 +725,11 @@ void ILigMenorEq::execute()
     else
         registrador = 0;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao ILigMenorEq::tipoInstucao()
+{
+    return TipoInstrucao::LIG_MENOR_EQ;
 }
 
 ILigMenorEqIm::ILigMenorEqIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
@@ -578,6 +747,11 @@ void ILigMenorEqIm::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao ILigMenorEqIm::tipoInstucao()
+{
+    return TipoInstrucao::LIG_MENOR_EQ_IM;
+}
+
 ILigEq::ILigEq(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
     : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
 {
@@ -591,6 +765,11 @@ void ILigEq::execute()
     else
         registrador = 0;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao ILigEq::tipoInstucao()
+{
+    return TipoInstrucao::LIG_EQ;
 }
 
 ILigEqIm::ILigEqIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
@@ -608,6 +787,11 @@ void ILigEqIm::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao ILigEqIm::tipoInstucao()
+{
+    return TipoInstrucao::LIG_EQ_IM;
+}
+
 ILigNaoEq::ILigNaoEq(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
     : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
 {
@@ -621,6 +805,11 @@ void ILigNaoEq::execute()
     else
         registrador = 0;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao ILigNaoEq::tipoInstucao()
+{
+    return TipoInstrucao::LIG_NAO_EQ;
 }
 
 ILigNaoEqIm::ILigNaoEqIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
@@ -638,6 +827,11 @@ void ILigNaoEqIm::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao ILigNaoEqIm::tipoInstucao()
+{
+    return TipoInstrucao::LIG_NAO_EQ_IM;
+}
+
 INaoBit::INaoBit(MaquinaVirtual &vm, Celula &registrador, Celula &operando1)
     : Instrucao(vm), registrador(registrador), operando1(operando1)
 {
@@ -647,6 +841,11 @@ void INaoBit::execute()
 {
     registrador = ~ operando1;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao INaoBit::tipoInstucao()
+{
+    return TipoInstrucao::NAO_BIT;
 }
 
 INaoBitIm::INaoBitIm(MaquinaVirtual &vm, Celula &registrador, Celula operando1)
@@ -660,6 +859,11 @@ void INaoBitIm::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao INaoBitIm::tipoInstucao()
+{
+    return TipoInstrucao::NAO_BIT_IM;
+}
+
 INada::INada(MaquinaVirtual &vm)
     : Instrucao(vm)
 {
@@ -668,6 +872,12 @@ INada::INada(MaquinaVirtual &vm)
 void INada::execute()
 {
     ++vm.pc;
+}
+
+
+TipoInstrucao::TipoInstrucao INada::tipoInstucao()
+{
+    return TipoInstrucao::NADA;
 }
 
 IEscritaPalavraIm::IEscritaPalavraIm(MaquinaVirtual &vm, string *palavra)
@@ -679,6 +889,11 @@ void IEscritaPalavraIm::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao IEscritaPalavraIm::tipoInstucao()
+{
+    return TipoInstrucao::ESCRITA_PALAVRA;
+}
+
 IEscritaChar::IEscritaChar(MaquinaVirtual &vm, Celula &m)
     : Instrucao(vm), m(m) { }
 
@@ -686,6 +901,11 @@ void IEscritaChar::execute()
 {
      vm.escreveChar(m.toChar());
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao IEscritaChar::tipoInstucao()
+{
+    return TipoInstrucao::ESCRITA_CHAR;
 }
 
 IEscritaCharIm::IEscritaCharIm(MaquinaVirtual &vm, int m)
@@ -697,6 +917,11 @@ void IEscritaCharIm::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao IEscritaCharIm::tipoInstucao()
+{
+    return TipoInstrucao::ESCRITA_CHAR_IM;
+}
+
 IEscritaInt::IEscritaInt(MaquinaVirtual &vm, Celula &m)
     : Instrucao(vm), m(m) { }
 
@@ -704,6 +929,11 @@ void IEscritaInt::execute()
 {
     vm.escreveInt(m.toInt());
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao IEscritaInt::tipoInstucao()
+{
+    return TipoInstrucao::ESCRITA_INT;
 }
 
 IEscritaIntIm::IEscritaIntIm(MaquinaVirtual &vm, int m)
@@ -715,6 +945,11 @@ void IEscritaIntIm::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao IEscritaIntIm::tipoInstucao()
+{
+    return TipoInstrucao::ESCRITA_INT_IM;
+}
+
 IEscritaDouble::IEscritaDouble(MaquinaVirtual &vm, Celula &m)
    : Instrucao(vm), m(m) { }
 
@@ -723,8 +958,15 @@ void IEscritaDouble::execute()
     vm.escreveDouble(m.toDouble());
     ++vm.pc;
 }
+
+TipoInstrucao::TipoInstrucao IEscritaDouble::tipoInstucao()
+{
+    return TipoInstrucao::ESCRITA_DOUBLE;
+}
+
 IEscritaDoubleIm::IEscritaDoubleIm(MaquinaVirtual &vm, double m)
    : Instrucao(vm), m(m) { }
+
 void IEscritaDoubleIm::execute()
 {
     vm.escreveDouble(m);
@@ -732,40 +974,56 @@ void IEscritaDoubleIm::execute()
 }
 
 
-IAdcIm::IAdcIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
-    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
+TipoInstrucao::TipoInstrucao IEscritaDoubleIm::tipoInstucao()
 {
+    return TipoInstrucao::ESCRITA_DOUBLE_IM;
 }
+
+IAdcIm::IAdcIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
+    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2) { }
+
 void IAdcIm::execute()
 {
     registrador = operando1 + operando2; 
     ++vm.pc;
 }
 
-ISubIm::ISubIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula  operando2)
-    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
+TipoInstrucao::TipoInstrucao IAdcIm::tipoInstucao()
 {
+    return TipoInstrucao::ADC_IM;
 }
+
+ISubIm::ISubIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula  operando2)
+    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2) { }
+
 void ISubIm::execute()
 {
     registrador = operando1 - operando2;
     ++vm.pc;
 }
 
-IMultIm::IMultIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
-    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
+TipoInstrucao::TipoInstrucao ISubIm::tipoInstucao()
 {
+    return TipoInstrucao::SUB_IM;
 }
+
+IMultIm::IMultIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
+    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2) { }
+
 void IMultIm::execute()
 {
     registrador = operando1 * operando2;
     ++vm.pc;
 }
 
-IDivIm::IDivIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
-    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
+TipoInstrucao::TipoInstrucao IMultIm::tipoInstucao()
 {
+    return TipoInstrucao::MULT_IM;
 }
+
+IDivIm::IDivIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
+    : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2) { }
+
 void IDivIm::execute()
 {
     if(operando2==0)
@@ -778,12 +1036,22 @@ void IDivIm::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao IDivIm::tipoInstucao()
+{
+    return TipoInstrucao::DIV_IM;
+}
+
 IRet::IRet(MaquinaVirtual &vm, Celula &registrador)
     : Instrucao(vm), registrador(registrador) { }
 
 void IRet::execute()
 {
     vm.pc = registrador.toInt();
+}
+
+TipoInstrucao::TipoInstrucao IRet::tipoInstucao()
+{
+    return TipoInstrucao::RET;
 }
 
 ITroca::ITroca(MaquinaVirtual &vm, Celula &registrador1, Celula &registrador2)
@@ -798,6 +1066,11 @@ void ITroca::execute()
     registrador2 = registrador1;
     registrador1 = temp;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao ITroca::tipoInstucao()
+{
+    return TipoInstrucao::TROCA;
 }
 
 IResto::IResto(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
@@ -816,11 +1089,14 @@ void IResto::execute()
     registrador = operando1 % operando2;
     ++vm.pc;
 }
-IRestoIm::IRestoIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
-    :Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
-{
 
+TipoInstrucao::TipoInstrucao IResto::tipoInstucao()
+{
+    return TipoInstrucao::RESTO;
 }
+
+IRestoIm::IRestoIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
+    :Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2) {}
 void IRestoIm::execute()
 {
     if(operando2==0)
@@ -833,6 +1109,11 @@ void IRestoIm::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao IRestoIm::tipoInstucao()
+{
+    return TipoInstrucao::RESTO_IM;
+}
+
 INeg::INeg(MaquinaVirtual &vm, Celula &registrador, Celula &operando1)
     :Instrucao(vm), registrador(registrador), operando1(operando1)
 {
@@ -843,6 +1124,12 @@ void INeg::execute()
     registrador = (-(operando1));
     ++vm.pc;
 }
+
+TipoInstrucao::TipoInstrucao INeg::tipoInstucao()
+{
+    return TipoInstrucao::NEG;
+}
+
 INegIm::INegIm(MaquinaVirtual &vm, Celula &registrador, Celula operando1)
     :Instrucao(vm), registrador(registrador), operando1(operando1)
 {
@@ -854,6 +1141,11 @@ void INegIm::execute()
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao INegIm::tipoInstucao()
+{
+    return TipoInstrucao::NEG_IM;
+}
+
 IBoolean::IBoolean(MaquinaVirtual &vm, Celula &registrador)
     : Instrucao(vm), registrador(registrador) { }
 void IBoolean::execute()
@@ -861,6 +1153,11 @@ void IBoolean::execute()
     if(registrador!= 0)
         registrador = 1;
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao IBoolean::tipoInstucao()
+{
+    return TipoInstrucao::BOOLEAN;
 }
 
 IPotencia::IPotencia(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula &operando2)
@@ -874,17 +1171,29 @@ void IPotencia::execute()
     ++vm.pc;
 }
 
+
+TipoInstrucao::TipoInstrucao IPotencia::tipoInstucao()
+{
+    return TipoInstrucao::POTENCIA;
+}
+
+
 IPotenciaIm::IPotenciaIm(MaquinaVirtual &vm, Celula &registrador, Celula &operando1, Celula operando2)
     : Instrucao(vm), registrador(registrador), operando1(operando1), operando2(operando2)
 {
 
 }
+
 void IPotenciaIm::execute()
 {
     registrador = operando1.pot(operando2);
     ++vm.pc;
 }
 
+TipoInstrucao::TipoInstrucao IPotenciaIm::tipoInstucao()
+{
+    return TipoInstrucao::POTENCIA_IM;
+}
 
 ICast::ICast(MaquinaVirtual &vm, Celula &registrador, TipoVariavel::TipoVariavel tipo)
     : Instrucao(vm), registrador(registrador), tipo(tipo) { }
@@ -903,4 +1212,9 @@ void ICast::execute()
         registrador.convToDouble();
     }
     ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao ICast::tipoInstucao()
+{
+    return TipoInstrucao::CAST;
 }

@@ -2,20 +2,9 @@
 #include "Instrucao.h"
 
 MaquinaVirtual::MaquinaVirtual()
+    : memoria(100)
 {
-    pc = 0;
-    pp = 0;
-    eax = 0;
-    ebx = 0;
-    ecx = 0;
-    edx = 0;
-    bp = 0;
-    er = 0;
-    pg = 0;
-    bf = false;
-    sf = false;
-    ef = false;
-    erf = false;
+    reiniciar();
 }
 
 MaquinaVirtual::~MaquinaVirtual()
@@ -33,13 +22,37 @@ MaquinaVirtual::~MaquinaVirtual()
     
 }
 
+void MaquinaVirtual::reiniciar()
+{
+    pc = 0;
+    pp = 0;
+    eax = 0;
+    ebx = 0;
+    ecx = 0;
+    edx = 0;
+    bp = 0;
+    er = 0;
+    pg = 0;
+    bf = false;
+    sf = false;
+    ef = false;
+    erf = false;
+    execute = true;
+}
+
 void MaquinaVirtual::executar()
 {
-    execute = true;
-
     while(execute&&(!erf))
     {
-        codigo[pc]->execute();
+        try
+        {
+            codigo[pc]->execute();
+        }
+        catch(exception &e)
+        {
+            cout<<"PROGRAMA ACABOU DE FORMA INESPERADA\n";
+            erf = true;
+        }
         if(pc<0||pc>=codigo.size())
         {
             cout<<"PROGRAMA ACABOU DE FORMA INESPERADA\n";
@@ -56,7 +69,17 @@ void MaquinaVirtual::parar()
 void MaquinaVirtual::passo()
 {
     if(execute&&(!erf))
-        codigo[pc]->execute();
+    {
+        try
+        {
+            codigo[pc]->execute();
+        }
+        catch(exception &e)
+        {
+            cout<<"PROGRAMA ACABOU DE FORMA INESPERADA\n";
+            erf = true;
+        }
+    }
 }
 
 void MaquinaVirtual::escreveInt(int c)

@@ -14,6 +14,7 @@ void empilha(MaquinaVirtual &vm , CelulaMemoria &op)
 {
 	//empilha op
 	vm.codigo.push_back(new ISalva(vm, op, vm.pp));
+	
 	//incrementa o ponteiro de pilha
 	inc_pp(vm, 1);
 }
@@ -21,9 +22,10 @@ void empilha(MaquinaVirtual &vm , CelulaMemoria &op)
 void desempilha(MaquinaVirtual &vm, CelulaMemoria &op)
 {
 	//decrementa o ponteiro de pilha
-	vm.codigo.push_back(new ICarrega(vm, op, vm.pp));
-	//desempilha eax
 	dec_pp(vm, 1);
+
+	//desempilha eax
+	vm.codigo.push_back(new ICarrega(vm, op, vm.pp));
 }
 
 void cmp(MaquinaVirtual &vm, CelulaMemoria &op1, CelulaMemoria &op2)

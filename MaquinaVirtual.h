@@ -18,6 +18,7 @@ public:
     void executar();
     void parar();
     void passo();
+    void reiniciar();
     int pc; //Contator de programa
     CelulaMemoria pp; //Ponteiro da pilha
     CelulaMemoria eax; // registrador acumulador
@@ -41,7 +42,6 @@ public:
     int leInt();
     char leChar();
     double leDouble();
-private:
     bool execute;
 };
 

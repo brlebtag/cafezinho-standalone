@@ -22,8 +22,8 @@ D			[0-9]
 L			[a-zA-Z_]
 H			[a-fA-F0-9]
 E			[Ee][+-]?{D}+
-ID [_a-zA-Z][_a-zA-Z0-9]*
-OC [0-7]
+ID 			[_a-zA-Z][_a-zA-Z0-9]*
+OC 			[0-7]
 
 %option noyywrap
 %option yylineno
@@ -49,7 +49,7 @@ OC [0-7]
 						return(INT_CONST); 
 					}
 
-0?{D}+				{
+[+-]?0?{D}+			{
 /* Numero Inteiro */
 						std::stringstream ss;
 						ss<< std::dec << yytext;
@@ -58,26 +58,26 @@ OC [0-7]
 						return(INT_CONST);
 					}	
 
-{D}+{E}				{
+[+-]?{D}+{E}		{
 /* Numero real  */		
 						yylval.dval = atof(yytext);
 						ultimo_token = "CONSTANTE REAL";
 						return(REAL_CONST); 
 					}
 
-{D}*"."{D}+({E})?	{	
+[+-]?{D}*"."{D}+({E})? {	
 /* Numero real  */
-						yylval.dval = atof(yytext);
-						ultimo_token = "CONSTANTE REAL";
-						return(REAL_CONST); 
-					}
+							yylval.dval = atof(yytext);
+							ultimo_token = "CONSTANTE REAL";
+							return(REAL_CONST); 
+					 	}
 
-{D}+"."{D}*({E})?	{
+[+-]?{D}+"."{D}*({E})?	{
 /* Numero real  */
-						yylval.dval = atof(yytext);
-						ultimo_token = "CONSTANTE REAL";
-						return(REAL_CONST); 
-					}
+							yylval.dval = atof(yytext);
+							ultimo_token = "CONSTANTE REAL";
+							return(REAL_CONST); 
+					    }
 "/*"		{
 				register int c;
 				for ( ; ; )
@@ -485,10 +485,11 @@ OC [0-7]
 				return IDENTIFICADOR;
       		}
 
-[ \t\v\n\f]+ 	; /* eat up whitespace */
+[ <<EOF>>\0\t\v\r\n\f]+ 	; /* eat up whitespace */
 
 .			{
-				/*ignorar caracter ruins*/
+				ultimo_token = yytext;
+				yyerror(0, "");
 			}		
 
 %%

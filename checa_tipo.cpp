@@ -197,30 +197,39 @@ TipoVariavel::TipoVariavel checar_tipo(TabelaSimbolo &tabela, No* no)
 				atrib->tipo = TIPO_ERRO;
 			}
 
-			if(NCHECA_NO(atrib->lhs, TipoNo::DECLARACAO_VARIAVEL_ESCALAR) || NCHECA_NO(atrib->lhs, TipoNo::DECLARACAO_VARIAVEL_VETORIAL))
+			if(NCHECA_NO(atrib->lhs, TipoNo::IDENTIFICADOR_ESCALAR) && NCHECA_NO(atrib->lhs, TipoNo::IDENTIFICADOR_VETORIAL))
 			{
-				cout<<"ERRO SEMANTICO NAO REALIZAR ESTA OPERACAO SOBRE O OPERADOR DIREITO DO TIPO NAO IDENTIFICADOR PROXIMO A "<<atrib->linha<<"\n";
+				cout<<"ERRO SEMANTICO NAO E POSSIVEL REALIZAR ESTA OPERACAO SOBRE O OPERADOR ESQUERDO DO TIPO NAO IDENTIFICADOR PROXIMO A "<<atrib->linha<<"\n";
 				erro_compilador = true;
 				atrib->tipo = TIPO_ERRO;
 			}
 
-			if(atrib->tipo!=TIPO_ERRO)
+			if(!erro_compilador)
 			{
 				if(atrib->op==DIV_ATRIBUICAO||atrib->op==POT_ATRIBUICAO)
 				{
 					if(lhs!=TIPO_REAL)
+					{
 						atrib->tipo = TIPO_ERRO;
+						erro_compilador = true;
+					}
 					else
-						atrib->tipo = TIPO_REAL;//ESTRITAMENTE REAL
+						atrib->tipo = TIPO_REAL;//ESTRITAMENTE REAL						
 				}
 				else if(atrib->op==MULT_ATRIBUICAO||atrib->op==ADICAO_ATRIBUICAO||atrib->op==SUBTRACAO_ATRIBUICAO)
 				{
 					//CAR > INT > REAL
 					if(lhs!=TIPO_REAL&&rhs==TIPO_REAL)
+					{
 						atrib->tipo = TIPO_ERRO;
+						erro_compilador = true;
+					}
 
 					if(lhs==TIPO_CAR&&rhs==TIPO_INT)
+					{
 						atrib->tipo = TIPO_ERRO;
+						erro_compilador = true;
+					}
 
 					atrib->tipo = lhs;
 				}
@@ -236,30 +245,36 @@ TipoVariavel::TipoVariavel checar_tipo(TabelaSimbolo &tabela, No* no)
 				{
 					//ESTRITAMENTE INTEIRO...
 					if(rhs==TIPO_REAL||lhs==TIPO_REAL)
+					{
 						atrib->tipo = TIPO_ERRO;
+						erro_compilador = true;
+					}
 
 					if(lhs!=TIPO_INT)
-						atrib->tipo = TIPO_ERRO;
+					{
+						atrib->tipo = TIPO_ERRO; 
+						erro_compilador = true;
+					}
 
 					atrib->tipo = TIPO_INT;
+
 				}
-				else if(atrib->op==ATRIBUICAO_OP&&atrib->tipo!=TIPO_ERRO)
+				else if(atrib->op==ATRIBUICAO_OP&&(!erro_compilador))
 				{
 					if(lhs==TIPO_INT&&rhs==TIPO_REAL)
 					{
 						cout<<"ERRO SEMANTICO NAO E POSSIVEL REALIZAR ESTA OPERACAO OPERADOR ESQUERO E DO TIPO INT ENQUANTO QUE O OPERADOR DIREITO E DO TIPO REAL PROXIMO A "<<atrib->linha<<"\n";
 						atrib->tipo = TIPO_ERRO;
+						erro_compilador = true;
 					}
 
 					if(lhs==TIPO_CAR&&(rhs==TIPO_REAL||rhs==TIPO_INT))
 					{
 						cout<<"ERRO SEMANTICO NAO E POSSIVEL REALIZAR ESTA OPERACAO OPERADOR ESQUERO E DO TIPO "<<nome_tipo(lhs)<<" ENQUANTO QUE O OPERADOR DIREITO E DO TIPO "<<nome_tipo(rhs)<<" PROXIMO A "<<atrib->linha<<"\n";
 						atrib->tipo = TIPO_ERRO;
+						erro_compilador = true;
 					}
 				}
-
-				if(atrib->tipo==TIPO_ERRO)
-					erro_compilador = true;
 			}	
 
 			return atrib->tipo;
@@ -286,7 +301,7 @@ TipoVariavel::TipoVariavel checar_tipo(TabelaSimbolo &tabela, No* no)
 				bin->tipo = TIPO_ERRO;
 			}
 
-			if(bin->tipo != TIPO_ERRO)
+			if(!erro_compilador)
 			{
 				if(bin->op==Operador::DIV_OP||bin->op==Operador::POT_OP)
 				{
@@ -324,12 +339,12 @@ TipoVariavel::TipoVariavel checar_tipo(TabelaSimbolo &tabela, No* no)
 				{
 					//ESTRITAMENTE INTEIRO...
 					if(lhs==TIPO_REAL||rhs==TIPO_REAL)
+					{
 						bin->tipo = TIPO_ERRO;
-					bin->tipo = TIPO_INT;
+						erro_compilador = true;
+					}
+					bin->tipo = TIPO_INT;					
 				}
-
-				if(bin->tipo==TIPO_ERRO)
-					erro_compilador = true;
 			}		
 
 			return bin->tipo;
@@ -355,13 +370,13 @@ TipoVariavel::TipoVariavel checar_tipo(TabelaSimbolo &tabela, No* no)
 				uni->tipo = TIPO_ERRO;
 			}
 
-			if(uni->tipo!= TIPO_ERRO)
+			if(!erro_compilador)
 			{
 				if(uni->op==Operador::INC_POS_OP||uni->op==Operador::DEC_POS_OP||uni->op==Operador::INC_PRE_OP||uni->op==Operador::DEC_PRE_OP)
 				{
-					if(NCHECA_NO(uni->rhs, TipoNo::DECLARACAO_VARIAVEL_ESCALAR) || NCHECA_NO(uni->rhs, TipoNo::DECLARACAO_VARIAVEL_VETORIAL))
+					if(NCHECA_NO(uni->rhs, TipoNo::IDENTIFICADOR_ESCALAR) && NCHECA_NO(uni->rhs, TipoNo::IDENTIFICADOR_VETORIAL))
 					{
-						cout<<"ERRO SEMANTICO NAO REALIZAR ESTA OPERACAO SOBRE UM NAO IDENTIFICADOR PROXIMO A "<<uni->linha<<"\n";
+						cout<<"ERRO SEMANTICO NAO E POSSIVEL REALIZAR ESTA OPERACAO SOBRE O OPERADOR DIREITO DO TIPO NAO IDENTIFICADOR PROXIMO A "<<uni->linha<<"\n";
 						erro_compilador = true;
 						uni->tipo = TIPO_ERRO;
 					}
@@ -407,7 +422,7 @@ TipoVariavel::TipoVariavel checar_tipo(TabelaSimbolo &tabela, No* no)
 				ter->tipo = TIPO_ERRO;
 			}
 
-			if(ter->tipo!=TIPO_ERRO)
+			if(!erro_compilador)
 			{
 				if(ifexpr==TIPO_REAL||elsexpr==TIPO_REAL)
 				{

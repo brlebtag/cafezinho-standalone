@@ -179,9 +179,9 @@ IteradorTabelaSimbolo analise_semantica(TabelaSimbolo &tabela, No* no, int profu
 
 		ListaExpressao *list = dynamic_cast<NListaExpressoes*>(ler->expressao)->expressoes;
 
-		for(IteradorExpressao it = list->begin(); it!= list->end(); ++it)
+		for(int i = 0; i<list->size(); ++i)
 		{
-			No* r = ultimo_parametro(tabela, (*it));
+			No* r = ultimo_parametro(tabela, list->at(i));
 			
 			if(CHECA_NO(r, CAST))
 			{
@@ -189,13 +189,13 @@ IteradorTabelaSimbolo analise_semantica(TabelaSimbolo &tabela, No* no, int profu
 
 				if(NCHECA_NO(r1, IDENTIFICADOR_ESCALAR)&&NCHECA_NO(r, IDENTIFICADOR_VETORIAL))
 				{
-					cout<<"ERRO SEMANTICO NAO REALIZAR ESTA OPERACAO SOBRE O OPERADOR DO TIPO NAO IDENTIFICADOR PROXIMO A "<<ler->linha<<"\n";
+					cout<<"ERRO SEMANTICO NAO E POSSIVEL REALIZAR ESTA OPERACAO SOBRE O OPERADOR DO TIPO NAO IDENTIFICADOR PROXIMO A "<<ler->linha<<"\n";
 					erro_compilador = true;
 				}
 			}
 			else if(NCHECA_NO(r, IDENTIFICADOR_ESCALAR)&&NCHECA_NO(r, IDENTIFICADOR_VETORIAL))
 			{
-				cout<<"ERRO SEMANTICO NAO REALIZAR ESTA OPERACAO SOBRE O OPERADOR DO TIPO NAO IDENTIFICADOR PROXIMO A "<<ler->linha<<"\n";
+				cout<<"ERRO SEMANTICO NAO E POSSIVEL REALIZAR ESTA OPERACAO SOBRE O OPERADOR DO TIPO NAO IDENTIFICADOR PROXIMO A "<<ler->linha<<"\n";
 				erro_compilador = true;
 			}
 		}
@@ -210,13 +210,13 @@ IteradorTabelaSimbolo analise_semantica(TabelaSimbolo &tabela, No* no, int profu
 
 		TipoVariavel::TipoVariavel tipo;
 
-		for(IteradorExpressao it = list->begin(); it!= list->end(); ++it)
+		for(int i = 0; i<list->size(); ++i)
 		{			
-			tipo = checar_tipo(tabela, ultimo_parametro(tabela, (*it)));
+			tipo = checar_tipo(tabela, ultimo_parametro(tabela, list->at(i)));
 
 			if(tipo == TIPO_ERRO || tipo == TIPO_NULO)
 			{
-				cout<<"ERRO SEMANTICO NAO REALIZAR ESTA OPERACAO ENCONTRADO "<<nome_tipo(tipo)<<" PROXIMO A "<<escreve->linha<<"\n";
+				cout<<"ERRO SEMANTICO NAO E POSSIVEL REALIZAR ESTA OPERACAO ENCONTRADO "<<nome_tipo(tipo)<<" PROXIMO A "<<escreve->linha<<"\n";
 				erro_compilador = true;
 			}
 		}

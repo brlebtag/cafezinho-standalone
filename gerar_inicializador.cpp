@@ -1,24 +1,47 @@
 #include "GerarCodigo.h"
 
-int gerar_inicializador(MaquinaVirtual &vm, TabelaRef &tabela, ListaExpressao *list, int profundidade, int offset, No* funcao)
+void gerar_inicializador(MaquinaVirtual &vm, TabelaRef &tabela, NInicializadorVetor *list, int profundidade, int offset, No* funcao)
 {
+	queue<NListaInicializador*> inicializador;
+	IteradorTabelaRef itIdent = tabela.find(list->nome->c_str());
+	Referencia ref = itIdent->second.top();
 
-	for(IteradorExpressao it = list->begin(); it!=list->end(); ++it)
+	for(int i=0; i<list->init->size(); ++i)
 	{
-		if((*it)->tipoNo() == TipoNo::LISTA_INICIALIZADOR)
-		{
-
-			offset += gerar_inicializador(vm, tabela, dynamic_cast<NListaInicializador*>(*it)->expressoes, profundidade, offset, funcao);
-
-		}
-		else
-		{
-			gerar_codigo(vm, tabela, (*it), profundidade, offset, funcao);
-			vm.codigo.push_back(new IMove(vm, vm.ebx, vm.eax));
-			gerar_atribuicao(vm, tabela, (*it), profundidade, offset, funcao);
-			++offset;
-		}
+		inicializador.push((NListaInicializador*)list->init->at(i));
 	}
 
-	return offset;
+	int indice = 0;
+	
+	while(!inicializador.empty())
+	{
+		NListaInicializador *init = inicializador.front();
+		inicializador.pop();
+
+		for(int i=0; i<init->expressoes->size(); ++i)
+		{
+			if(CHECA_NO(init->expressoes->at(i), TipoNo::LISTA_INICIALIZADOR))
+				inicializador.push((NListaInicializador*)init->expressoes->at(i));
+			else
+			{
+				//gera o código...
+				gerar_codigo(vm, tabela, init->expressoes->at(i), profundidade, offset, funcao);
+
+				if(ref.profundidade == 0)
+				{
+					// ebx = pg + offset(inicial) + i
+					vm.codigo.push_back(new IAdcIm(vm, vm.ebx, vm.pg, ref.offset + indice));
+				}
+				else
+				{
+					vm.codigo.push_back(new IAdcIm(vm, vm.ebx, vm.bp, ref.offset + indice));
+				}
+
+				// vm.memoria[vm.ebx] = vm.eax
+				vm.codigo.push_back(new ISalva(vm, vm.eax, vm.ebx));
+
+				++indice;
+			}
+		}
+	}
 }

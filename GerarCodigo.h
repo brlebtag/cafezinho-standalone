@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <stack>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
@@ -36,7 +37,8 @@ typedef std::vector<NDeclaracaoVariavel*>::iterator IteradorVariavel;
 #define __CHECA_NO__
 #define CHECA_NO(no, IDENT) no->tipoNo() == IDENT
 #define NCHECA_NO(no, IDENT) no->tipoNo() != IDENT
-#endif 
+#endif
+
 
 //GerarCodigo.cpp
 void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidade, int offset, No *funcao = 0);
@@ -52,7 +54,7 @@ void gerar_indice(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 void gerar_atribuicao(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidade, int offset, No* funcao);
 
 //gerar_inicializador.cpp
-int gerar_inicializador(MaquinaVirtual &vm, TabelaRef &tabela, ListaExpressao *list, int profundidade, int offset, No* funcao);
+void gerar_inicializador(MaquinaVirtual &vm, TabelaRef &tabela, NInicializadorVetor *list, int profundidade, int offset, No* funcao);;
 
 //Comandos.cpp
 void empilha(MaquinaVirtual &vm , CelulaMemoria &op);

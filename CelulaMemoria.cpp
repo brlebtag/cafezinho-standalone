@@ -67,6 +67,13 @@ CelulaMemoria CelulaMemoria::operator=(const double &rhs)
     return (*this);
 }
 
+CelulaMemoria CelulaMemoria::operator=(const char &rhs)
+{
+    this->celula.inteiro = (int) rhs;
+    this->tipo = INTEIRO;
+    return (*this);
+}
+
 CelulaMemoria CelulaMemoria::operator+(const CelulaMemoria &rhs)
 {
     CelulaMemoria r;
@@ -323,18 +330,24 @@ bool CelulaMemoria::operator!=(const CelulaMemoria &rhs)
     }
 }
 
-char CelulaMemoria::toChar()
+char CelulaMemoria::toChar() const
 {
+    if(this->tipo==REAL)
+        return (int) this->celula.real;
     return (char) this->celula.inteiro;
 }
 
-int CelulaMemoria::toInt()
+int CelulaMemoria::toInt() const
 {
+    if(this->tipo==REAL)
+        return (int) this->celula.real;
     return this->celula.inteiro;
 }
 
-double CelulaMemoria::toDouble()
+double CelulaMemoria::toDouble() const
 {
+    if(this->tipo==INTEIRO)
+        return (double) this->celula.inteiro;
     return this->celula.real;
 }
 
@@ -402,4 +415,12 @@ CelulaMemoria CelulaMemoria::pot(const double &rhs)
     CelulaMemoria m;
     m.celula.real = pow(this->celula.real, rhs);
     return m;
+}
+
+std::ostream& operator<<(std::ostream& os, const CelulaMemoria& celula)
+{
+    if(celula.tipo== CelulaMemoria::INTEIRO)
+        os<<celula.toInt();
+    else
+        os<<celula.toDouble();
 }

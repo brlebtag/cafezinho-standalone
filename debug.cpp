@@ -226,7 +226,7 @@ void debug_arvore(No* no, int nivel)
 		case TipoNo::NOVA_LINHA:
 		{
 			imprime_nivel(nivel);
-			cout<<"NOVA INHA, linha: "<<no->linha<<"\n";
+			cout<<"NOVA LINHA, linha: "<<no->linha<<"\n";
 		}
 		break;
 		case TipoNo::SE:

@@ -30,12 +30,12 @@ void gerar_indice(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 
 	int dimensao = 1;
 
-	gerar_codigo(vm, tabela, ultimo_elemento(vm, tabela, ident->indice->at(ident->indice->size()), profundidade, offset, funcao) , profundidade, offset, funcao);
+	gerar_codigo(vm, tabela, ultimo_elemento(vm, tabela, ident->indice->at(ident->indice->size()-1), profundidade, offset, funcao) , profundidade, offset, funcao);
 	
 	int j = var->dimensoes->size() -1;
 
-	//Se for diferente de 1 dimensão
-	if(j>1)
+	//Se for diferente de 1 dimensão. obs j = dimensao -1 logo tem q ser j>0 e n j>1
+	if(var->dimensoes->size()>1)
 		vm.codigo.push_back(new IMove(vm, vm.ebx, vm.eax));
 	
 	for(int i = ident->indice->size()-2; i>=0; --i, --j)
@@ -45,8 +45,8 @@ void gerar_indice(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 		vm.codigo.push_back(new IMultIm(vm, vm.eax, vm.eax, CelulaMemoria(dimensao)));
 		vm.codigo.push_back(new IAdc(vm, vm.ebx, vm.eax, vm.ebx));
 	}
-	//Se for diferente de 1 dimensão
-	if(j>1)
+	//Se for diferente de 1 dimensão. obs j = dimensao -1 logo tem q ser j>0 e n j>1
+	if(var->dimensoes->size()>1)
 		vm.codigo.push_back(new IMove(vm, vm.eax, vm.ebx));
 }
 

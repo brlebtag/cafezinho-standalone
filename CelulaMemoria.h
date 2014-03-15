@@ -19,6 +19,7 @@ public:
     CelulaMemoria operator=(const CelulaMemoria &rhs);
     CelulaMemoria operator=(const int &rhs);
     CelulaMemoria operator=(const double &rhs);
+    CelulaMemoria operator=(const char &rhs);
     CelulaMemoria operator+(const CelulaMemoria &rhs);
     CelulaMemoria operator+(const int &rhs);
     CelulaMemoria operator-(const CelulaMemoria &rhs);
@@ -44,9 +45,9 @@ public:
     bool operator<(const CelulaMemoria &rhs);
     bool operator<=(const CelulaMemoria &rhs);
     bool operator>=(const CelulaMemoria &rhs);
-    char toChar();
-    int toInt();
-    double toDouble();
+    char toChar() const;
+    int toInt() const; 
+    double toDouble() const;
     void convToInt();
     void convToDouble();
     void convToChar();
@@ -59,6 +60,7 @@ public:
     {
         INTEIRO, REAL
     }tipo;
+    friend std::ostream& operator<<(std::ostream& os, const CelulaMemoria& celula);
 };
 
 #endif // CELULAMEMORIA_H

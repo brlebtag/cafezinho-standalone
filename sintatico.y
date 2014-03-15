@@ -285,10 +285,11 @@ inicio_declarador
 			
 			$$ = new ListaInstrucao();
 			
-			NIdentificadorEscalar *ident = new NIdentificadorEscalar(new QString(decEsc->nome->c_str(), yylineno), yylineno);
+			NIdentificadorEscalar *ident = new NIdentificadorEscalar(new QString(decEsc->nome->c_str()), yylineno);
 
 			NAtribuicao* atrib = new NAtribuicao(ident, Operador::ATRIBUICAO_OP, $3->at(0), yylineno);
 
+			$$->push_back($1);
 			$$->push_back((NInstrucao*)atrib);
 
 			delete $3;
@@ -457,7 +458,7 @@ expressao_primaria
 	| INT_CONST { $$ = new NInteiro($1, yylineno);  }
 	| CAR_CONST { $$ = new NCaracter($1, yylineno);  }
 	| PALAVRA_LITERAL { $$ = new NPalavraLiteral($1, yylineno);  }
-	| REAL_CONST { $$ = new NReal($1, yylineno);  }
+	| REAL_CONST { $$ = new NReal($1, yylineno); }
 	| NOVA_LINHA {  $$ = new NNovaLinha(yylineno); }
 	| '(' expressao ')' { $$ = $2; $$->linha = $1; }
 	;
@@ -506,4 +507,5 @@ void yyerror(NBloco * bloco, const char *s)
 {
     cout<<"ERRO SINTATICO JUNTO AO TOKEN "<<ultimo_token<<" PERTO DE "<<yylineno<<endl;
     erro_compilador = true;
+    exit(1);
 }
