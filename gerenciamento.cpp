@@ -78,6 +78,9 @@ void gerar_atribuicao(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profund
 	else
 	{
 		NIdentificadorVetorial* ident = dynamic_cast<NIdentificadorVetorial*>(lhs);
+		
+		empilha(vm, vm.ebx);
+
 		gerar_indice(vm, tabela, lhs, profundidade, offset, funcao);
 
 		if(ref.profundidade == 0)
@@ -106,6 +109,8 @@ void gerar_atribuicao(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profund
 				vm.codigo.push_back(new IAdc(vm, vm.eax, vm.ecx, vm.eax));
 			}
 		}
+		
+		desempilha(vm, vm.ebx);
 
 		// vm.memoria[vm.eax] = vm.ebx
 		vm.codigo.push_back(new ISalva(vm, vm.ebx, vm.eax));

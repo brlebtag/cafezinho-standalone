@@ -66,7 +66,7 @@ void ISalto::execute()
 
 TipoInstrucao::TipoInstrucao ISalto::tipoInstucao()
 {
-    return TipoInstrucao::MOVE_IM;
+    return TipoInstrucao::SALTO;
 }
 
 IAdc::IAdc(MaquinaVirtual &vm, Celula& registrador, Celula& operando1, Celula& operando2)
@@ -177,6 +177,9 @@ TipoInstrucao::TipoInstrucao ICmp::tipoInstucao()
 
 ICmpIm::ICmpIm(MaquinaVirtual &vm, Celula &operando1, Celula operando2)
     : Instrucao(vm), operando1(operando1), operando2(operando2) { }
+ICmpIm::ICmpIm(MaquinaVirtual &vm, Celula &operando1, int operando2)
+    : Instrucao(vm), operando1(operando1), operando2(operando2) { }
+    
 void ICmpIm::execute()
 {
     if(operando1 > operando2)
@@ -351,7 +354,7 @@ TipoInstrucao::TipoInstrucao IParar::tipoInstucao()
 }
 
 IChamada::IChamada(MaquinaVirtual &vm, int &offset)
-    : ISalto(vm, offset) { }
+    : ISalto(vm, offset) {}
 
 void IChamada::execute()
 {
@@ -427,7 +430,7 @@ void ICarrega::execute()
     if(acessa.toInt()<0)
     {
         vm.erf = true;
-        cout<<"ACESSO INDEVIDO DE MEMORIA: ERRO DE SEGMENTACAO\n";
+        cout<<"ACESSO INDEVIDO DE MEMORIA: ERRO DE SEGMENTACAO\nENDERECO MEMORIA: "<<acessa.toInt()<<"\n";
     }
     try
     {
@@ -436,7 +439,7 @@ void ICarrega::execute()
     catch(exception &e)
     {
         vm.erf = true;
-        cout<<"ACESSO INDEVIDO DE MEMORIA: ERRO DE SEGMENTACAO\n";
+        cout<<"ACESSO INDEVIDO DE MEMORIA: ERRO DE SEGMENTACAO\nENDERECO MEMORIA: "<<acessa.toInt()<<"\n";
     }
 
     ++vm.pc;
@@ -1150,6 +1153,7 @@ IBoolean::IBoolean(MaquinaVirtual &vm, Celula &registrador)
     : Instrucao(vm), registrador(registrador) { }
 void IBoolean::execute()
 {
+    registrador.convToInt();
     if(registrador!= 0)
         registrador = 1;
     ++vm.pc;
@@ -1217,4 +1221,18 @@ void ICast::execute()
 TipoInstrucao::TipoInstrucao ICast::tipoInstucao()
 {
     return TipoInstrucao::CAST;
+}
+
+ISistema::ISistema(MaquinaVirtual &vm, Sistema::Comando comando)
+    : Instrucao(vm), comando(comando) { }
+
+void ISistema::execute()
+{
+    vm.sistema(comando);
+    ++vm.pc;
+}
+
+TipoInstrucao::TipoInstrucao ISistema::tipoInstucao()
+{
+    return TipoInstrucao::SISTEMA;
 }

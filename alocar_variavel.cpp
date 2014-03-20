@@ -69,21 +69,3 @@ int dimensao_vetor(NDeclVarVetorial *var)
 
 	return dimensao;
 }
-
-int quantidade_alocada(No *no)
-{
-	NDeclaracaoFuncao *func = dynamic_cast<NDeclaracaoFuncao*>(no);
-	int quantidade = 0;
-
-	for(IteradorVariavel it = func->parametros->begin(); it!= func->parametros->end(); ++it)
-	{
-		if(CHECA_NO((*it), TipoNo::DECLARACAO_VARIAVEL_ESCALAR))
-			++quantidade;
-		else
-		{
-			quantidade += dimensao_vetor(dynamic_cast<NDeclVarVetorial*>(*it));
-		}
-	}
-
-	return quantidade;
-}

@@ -80,10 +80,10 @@ TipoVariavel::TipoVariavel checar_tipo(TabelaSimbolo &tabela, No* no)
 
 					bool resultado = true;
 
-					//Checa o tipo do indice para ver se é inteiro
+					//Checa o tipo do indice para ver se é inteiro ou char...
 					for(IteradorExpressao it = ident->indice->begin(); it!= ident->indice->end(); ++it)
 					{
-						resultado &= checar_tipo(tabela, (No*)(*it)) == TIPO_INT;
+						resultado &= (checar_tipo(tabela, (No*)(*it)) == TIPO_INT || checar_tipo(tabela, (No*)(*it)) == TIPO_CAR);
 					}
 
 					if(resultado)
@@ -93,7 +93,7 @@ TipoVariavel::TipoVariavel checar_tipo(TabelaSimbolo &tabela, No* no)
 					else
 					{
 						//mensagem de erro...
-						cout<<"ERRO SEMANTICO INDICE DE VETOR NAO E INTEIRO PROXIMO A "<<ident->linha<<"\n";
+						cout<<"ERRO SEMANTICO INDICE DE VETOR NAO E INTEIRO OU CAR PROXIMO A "<<ident->linha<<"\n";
 						erro_compilador = true;
 						ident->tipo = TIPO_ERRO;
 					}
@@ -313,11 +313,10 @@ TipoVariavel::TipoVariavel checar_tipo(TabelaSimbolo &tabela, No* no)
 					//REAL > INT E INT > CAR
 					if(lhs==TIPO_REAL||rhs==TIPO_REAL)
 						bin->tipo = TIPO_REAL;
-
-					if(lhs==TIPO_INT||rhs==TIPO_INT)
+					else if(lhs==TIPO_INT||rhs==TIPO_INT)
 						bin->tipo = TIPO_INT;
-
-					bin->tipo = TIPO_CAR;	
+					else
+						bin->tipo = TIPO_CAR;	
 				}
 				else 
 					if(
@@ -394,7 +393,7 @@ TipoVariavel::TipoVariavel checar_tipo(TabelaSimbolo &tabela, No* no)
 
 			TipoVariavel::TipoVariavel tipo = checar_tipo(tabela, (No*) ter->expressao);
 
-			if(tipo==TIPO_ERRO||tipo==TIPO_PALAVRA||tipo==TIPO_NULO||tipo==TIPO_REAL||tipo==TIPO_NOVALINHA)
+			if(tipo==TIPO_ERRO||tipo==TIPO_PALAVRA||tipo==TIPO_NULO||tipo==TIPO_NOVALINHA)
 			{
 				//error
 				cout<<"ERRO SEMANTICO NAO E POSSIVEL AVALIAR A EXPRESSAO PROXIMO A "<<ter->linha<<"\n";

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 #include "Instrucao.h"
 #include "CelulaMemoria.h"
 
@@ -34,7 +35,7 @@ public:
     bool erf; //Flag indicando erro...
     vector<CelulaMemoria> memoria;
     vector<Instrucao*> codigo;
-    vector<int>rotulo;
+    vector<int*>rotulo;
     void escreveInt(int c);
     void escreveChar(char c);
     void escreveDouble(double c);
@@ -43,6 +44,7 @@ public:
     char leChar();
     double leDouble();
     bool execute;
+    void sistema(Sistema::Comando comando);
 };
 
 #endif // MAQUINAVIRTUAL_H

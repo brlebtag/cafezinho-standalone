@@ -68,29 +68,33 @@
      NOVA_LINHA = 272,
      INC_OP = 273,
      DEC_OP = 274,
-     ENTAO = 275,
-     EXECUTE = 276,
-     SENAO = 277,
-     MULT_ATRIBUICAO = 278,
-     DIV_ATRIBUICAO = 279,
-     MOD_ATRIBUICAO = 280,
-     ADICAO_ATRIBUICAO = 281,
-     SUBTRACAO_ATRIBUICAO = 282,
-     ESQ_ATRIBUICAO = 283,
-     DIR_ATRIBUICAO = 284,
-     E_ATRIBUICAO = 285,
-     XOR_ATRIBUICAO = 286,
-     OU_ATRIBUICAO = 287,
-     POT_ATRIBUICAO = 288,
-     OU_OP = 289,
-     E_OP = 290,
-     EQ_OP = 291,
-     NE_OP = 292,
-     LE_OP = 293,
-     GE_OP = 294,
-     ESQ_OP = 295,
-     DIR_OP = 296,
-     POT_OP = 297
+     TERMINAR = 275,
+     LIMPAR = 276,
+     ENTAO = 277,
+     EXECUTE = 278,
+     SENAO = 279,
+     MULT_ATRIBUICAO = 280,
+     DIV_ATRIBUICAO = 281,
+     MOD_ATRIBUICAO = 282,
+     ADICAO_ATRIBUICAO = 283,
+     SUBTRACAO_ATRIBUICAO = 284,
+     ESQ_ATRIBUICAO = 285,
+     DIR_ATRIBUICAO = 286,
+     E_ATRIBUICAO = 287,
+     XOR_ATRIBUICAO = 288,
+     OU_ATRIBUICAO = 289,
+     POT_ATRIBUICAO = 290,
+     OU_OP = 291,
+     E_OP = 292,
+     EQ_OP = 293,
+     NE_OP = 294,
+     LE_OP = 295,
+     GE_OP = 296,
+     ESQ_OP = 297,
+     DIR_OP = 298,
+     POT_OP = 299,
+     BT_OP = 300,
+     LT_OP = 301
    };
 #endif
 
@@ -125,7 +129,7 @@ typedef union YYSTYPE
 
 
 /* Line 2068 of yacc.c  */
-#line 129 "sintatico.tab.h"
+#line 133 "sintatico.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

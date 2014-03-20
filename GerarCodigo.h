@@ -46,7 +46,6 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 //alocar_variavel.cpp
 Alocado alocar_variavel(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidade, int offset, bool parametro = false);
 int dimensao_vetor(NDeclVarVetorial *var);
-int quantidade_alocada(No *no);
 
 //gerenciamento.cpp
 No* ultimo_elemento(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidade, int offset, No *funcao);
@@ -67,6 +66,7 @@ void move(MaquinaVirtual &vm, CelulaMemoria &op1, CelulaMemoria &op2);
 void seq(MaquinaVirtual &vm, int &offset);
 void cmp(MaquinaVirtual &vm, CelulaMemoria &op1, CelulaMemoria &op2);
 void cmp_imm(MaquinaVirtual &vm, CelulaMemoria &op1, CelulaMemoria op2);
+void cmp_imm(MaquinaVirtual &vm, CelulaMemoria &op1, int op2);
 void si(MaquinaVirtual &vm, int &offset);
 void carrega(MaquinaVirtual &vm, CelulaMemoria &op1, CelulaMemoria &op2);
 void ret(MaquinaVirtual &vm);

@@ -48,9 +48,9 @@ bool checa_vetor(ListaExpressao *dimensao, ListaExpressao *lista, int indice, in
 }
 
 %parse-param { NBloco *bloco }
+%error-verbose 
 
-
-%token CAR INT REAL NULO
+%token CAR INT REAL NULO 
 
 %token<sval> IDENTIFICADOR 
 %token<sval> PALAVRA_LITERAL 
@@ -69,17 +69,19 @@ bool checa_vetor(ListaExpressao *dimensao, ListaExpressao *lista, int indice, in
 %token<ival> '['
 %token<ival> INC_OP
 %token<ival> DEC_OP
+%token<ival> TERMINAR
+%token<ival> LIMPAR
 %token ENTAO EXECUTE SENAO
 
 %token MULT_ATRIBUICAO DIV_ATRIBUICAO MOD_ATRIBUICAO ADICAO_ATRIBUICAO SUBTRACAO_ATRIBUICAO 
 %token ESQ_ATRIBUICAO DIR_ATRIBUICAO E_ATRIBUICAO XOR_ATRIBUICAO OU_ATRIBUICAO POT_ATRIBUICAO
 
-%token OU_OP E_OP EQ_OP NE_OP LE_OP GE_OP ESQ_OP DIR_OP POT_OP
+%token OU_OP E_OP EQ_OP NE_OP LE_OP GE_OP ESQ_OP DIR_OP POT_OP BT_OP LT_OP
 
 %start programa
 
 %type<listInstr> unidade_traducao lista_instrucao declaracao_externa lista_declaracao inicio_declarador inicio_lista_declaracao declaracao
-%type<inst> instrucao instrucao_expressao 
+%type<inst> instrucao instrucao_expressao instrucao_sistema
 %type<inst> instrucao_decisao instrucao_iteracao instrucao_entrada_saida instrucao_salto
 %type<tipoVar> tipo_especificador
 %type<declFunc> declarador_funcao
@@ -209,6 +211,7 @@ instrucao
 	| instrucao_iteracao { $$ = $1; }
 	| instrucao_entrada_saida { $$ = $1; }
 	| instrucao_salto { $$ = $1; }
+	| instrucao_sistema { $$ = $1; }
 	;
 
 instrucao_expressao
@@ -233,6 +236,12 @@ instrucao_salto
 	: RETORNE ';' { $$ = new NRetorne(new NExpressao($1), $1); }
 	| RETORNE expressao ';' { $$ = new NRetorne($2, $1); }
 	;
+
+instrucao_sistema
+	: TERMINAR ';' { $$ = new NTerminar($1); }
+	| LIMPAR ';' { $$ = new NLimpar($1); }
+	;
+
 
 lista_declaracao
 	: declaracao  { $$ = $1; }
@@ -414,8 +423,8 @@ expressao_igualdade
 
 expressao_relacional
 	: expressao_shift { $$ = $1; }
-	| expressao_relacional '<' expressao_shift { $$ = new NOperacaoBinaria($1, Operador::LT_OP, $3, $1->linha); }
-	| expressao_relacional '>' expressao_shift { $$ = new NOperacaoBinaria($1, Operador::BT_OP, $3, $1->linha); }
+	| expressao_relacional LT_OP expressao_shift { $$ = new NOperacaoBinaria($1, Operador::LT_OP, $3, $1->linha); }
+	| expressao_relacional BT_OP expressao_shift { $$ = new NOperacaoBinaria($1, Operador::BT_OP, $3, $1->linha); }
 	| expressao_relacional LE_OP expressao_shift { $$ = new NOperacaoBinaria($1, Operador::LE_OP, $3, $1->linha); }
 	| expressao_relacional GE_OP expressao_shift { $$ = new NOperacaoBinaria($1, Operador::GE_OP, $3, $1->linha); }
 	;
@@ -449,7 +458,7 @@ expressao_unaria
 	: expressao_posfix { $$ = $1; }
 	| INC_OP expressao_unaria { $$ = new NOperacaoUnaria($2, Operador::INC_PRE_OP, $1); }
 	| DEC_OP expressao_unaria { $$ = new NOperacaoUnaria($2, Operador::DEC_PRE_OP, $1); }
-	| operador_unario expressao_cast { $1->rhs = $1; $$ = $1; }
+	| operador_unario expressao_cast { $1->rhs = $2; $$ = $1; }
 	;
 
 operador_unario
@@ -519,6 +528,7 @@ bool checa_vetor(ListaExpressao *dimensao, ListaExpressao *lista, int indice, in
 
 void yyerror(NBloco * bloco, const char *s)
 {
+	//cout<<s<<endl<<yylineno<<endl;
     cout<<"ERRO SINTATICO JUNTO AO TOKEN "<<ultimo_token<<" PERTO DE "<<yylineno<<endl;
     erro_compilador = true;
     exit(1);

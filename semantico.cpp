@@ -134,7 +134,9 @@ IteradorTabelaSimbolo analise_semantica(TabelaSimbolo &tabela, No* no, int profu
 		for(IteratorRemover it = remover.begin(); it!= remover.end(); ++it)
 		{
 			IteradorTabelaSimbolo itSim = (*it);
+			
 			delete itSim->second->top();
+			itSim->second->pop();
 
 			if(itSim->second->empty())
             {
@@ -179,13 +181,31 @@ IteradorTabelaSimbolo analise_semantica(TabelaSimbolo &tabela, No* no, int profu
 
 		ListaExpressao *list = dynamic_cast<NListaExpressoes*>(ler->expressao)->expressoes;
 
+		TipoVariavel::TipoVariavel tipo;
+
 		for(int i = 0; i<list->size(); ++i)
 		{
 			No* r = ultimo_parametro(tabela, list->at(i));
+
+			tipo = checar_tipo(tabela, ultimo_parametro(tabela, r));
+
+			if(tipo == TIPO_ERRO || tipo == TIPO_NULO || tipo== TIPO_PALAVRA|| tipo == TIPO_NOVALINHA)
+			{
+				cout<<"ERRO SEMANTICO NAO E POSSIVEL REALIZAR ESTA OPERACAO ENCONTRADO "<<nome_tipo(tipo)<<" PROXIMO A "<<ler->linha<<"\n";
+				erro_compilador = true;
+			}
 			
 			if(CHECA_NO(r, CAST))
 			{
 				No* r1 = ultimo_parametro(tabela, dynamic_cast<NCast*>(r)->expressao);
+
+				tipo = checar_tipo(tabela, ultimo_parametro(tabela, r1));
+
+				if(tipo == TIPO_ERRO || tipo == TIPO_NULO || tipo== TIPO_PALAVRA|| tipo == TIPO_NOVALINHA)
+				{
+					cout<<"ERRO SEMANTICO NAO E POSSIVEL REALIZAR ESTA OPERACAO ENCONTRADO "<<nome_tipo(tipo)<<" PROXIMO A "<<ler->linha<<"\n";
+					erro_compilador = true;
+				}
 
 				if(NCHECA_NO(r1, IDENTIFICADOR_ESCALAR)&&NCHECA_NO(r, IDENTIFICADOR_VETORIAL))
 				{
@@ -233,7 +253,7 @@ IteradorTabelaSimbolo analise_semantica(TabelaSimbolo &tabela, No* no, int profu
 
 		TipoVariavel::TipoVariavel tipo = checar_tipo(tabela, ifinstr->expressao);
 
-		if(tipo==TIPO_ERRO||tipo==TIPO_PALAVRA||tipo==TIPO_NULO||tipo ==TIPO_REAL)
+		if(tipo==TIPO_ERRO||tipo==TIPO_PALAVRA||tipo==TIPO_NULO)
 		{
 			cout<<"ERRO SEMANTICO NAO E POSSIVEL AVALIAR ESTA EXPRESSAO ENCONTRADO TIPO "<<nome_tipo(tipo)<<" PROXIMO A "<<ifinstr->linha<<"\n";
 			erro_compilador = true;
@@ -249,7 +269,7 @@ IteradorTabelaSimbolo analise_semantica(TabelaSimbolo &tabela, No* no, int profu
 
 		TipoVariavel::TipoVariavel tipo = checar_tipo(tabela, ifinstr->expressao);
 
-		if(tipo==TIPO_ERRO||tipo==TIPO_PALAVRA||tipo==TIPO_NULO||tipo ==TIPO_REAL)
+		if(tipo==TIPO_ERRO||tipo==TIPO_PALAVRA||tipo==TIPO_NULO)
 		{
 			cout<<"ERRO SEMANTICO NAO E POSSIVEL AVALIAR ESTA EXPRESSAO ENCONTRADO TIPO "<<nome_tipo(tipo)<<" PROXIMO A "<<ifinstr->linha<<"\n";
 			erro_compilador = true;
@@ -266,7 +286,7 @@ IteradorTabelaSimbolo analise_semantica(TabelaSimbolo &tabela, No* no, int profu
 
 		TipoVariavel::TipoVariavel tipo = checar_tipo(tabela, enq->expressao);
 
-		if(tipo==TIPO_ERRO||tipo==TIPO_PALAVRA||tipo==TIPO_NULO||tipo ==TIPO_REAL)
+		if(tipo==TIPO_ERRO||tipo==TIPO_PALAVRA||tipo==TIPO_NULO)
 		{
 			cout<<"ERRO SEMANTICO NAO E POSSIVEL AVALIAR ESTA EXPRESSAO ENCONTRADO TIPO "<<nome_tipo(tipo)<<" PROXIMO A "<<enq->linha<<"\n";
 			erro_compilador = true;
@@ -350,4 +370,6 @@ IteradorTabelaSimbolo analise_semantica(TabelaSimbolo &tabela, No* no, int profu
     	erro_compilador = true;
     	return tabela.end();
 	}
+	
+	return tabela.end();
 }

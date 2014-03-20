@@ -6,6 +6,14 @@
 #include "CelulaMemoria.h"
 #include "arvore_abstrata.h"
 
+namespace Sistema
+{
+    enum Comando
+    {
+        LIMPAR
+    };
+};
+
 namespace TipoInstrucao
 {
     enum TipoInstrucao
@@ -22,6 +30,7 @@ namespace TipoInstrucao
         DIV_IM,
         CMP,
         CMP_IM,
+        SALTO,
         SALTO_EQ,
         SALTO_MAIOR,
         SALTO_NAO_EQ,
@@ -74,7 +83,8 @@ namespace TipoInstrucao
         BOOLEAN,
         POTENCIA,
         POTENCIA_IM,
-        CAST
+        CAST,
+        SISTEMA
     };
 };
 
@@ -186,6 +196,7 @@ class ICmpIm: public Instrucao
 {
 public:
     ICmpIm(MaquinaVirtual &vm, Celula &operando1, Celula operando2);
+    ICmpIm(MaquinaVirtual &vm, Celula &operando1, int operando2);
     void execute();
     TipoInstrucao::TipoInstrucao tipoInstucao();
     Celula &operando1;
@@ -769,6 +780,15 @@ public:
     TipoInstrucao::TipoInstrucao tipoInstucao();
     TipoVariavel::TipoVariavel tipo;
     Celula &registrador;
+};
+
+class ISistema: public Instrucao
+{
+public:
+    ISistema(MaquinaVirtual &vm, Sistema::Comando comando);
+    void execute();
+    TipoInstrucao::TipoInstrucao tipoInstucao();
+    Sistema::Comando comando;
 };
 
 #endif // INSTRUCAO_H

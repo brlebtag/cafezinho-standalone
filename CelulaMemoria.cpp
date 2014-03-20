@@ -145,10 +145,12 @@ CelulaMemoria CelulaMemoria::operator-() const
     if( this->tipo == REAL )
     {
         m.celula.real = - this->celula.real;
+        m.tipo = REAL;
     }
     else
     {
         m.celula.inteiro = - this->celula.inteiro;
+        m.tipo = INTEIRO;
     }
 
     return m;
@@ -203,8 +205,8 @@ CelulaMemoria CelulaMemoria::operator/(const CelulaMemoria &rhs)
     }
     else
     {
-        r.celula.real = ((double) this->celula.inteiro / rhs.celula.inteiro);
-        r.tipo = INTEIRO;
+        r.celula.real = (double)(((double) this->celula.inteiro) / ((double)rhs.celula.inteiro));
+        r.tipo = REAL;
     }
 
     return r;
@@ -262,11 +264,17 @@ bool CelulaMemoria::operator==(const CelulaMemoria &rhs)
 {
     if(rhs.tipo == INTEIRO)
     {
-        return this->celula.inteiro==rhs.celula.inteiro;
+        if(this->tipo == INTEIRO)
+            return this->celula.inteiro == rhs.celula.inteiro;
+        else
+            return ((int)(this->celula.real) == rhs.celula.inteiro);
     }
     else
     {
-        return this->celula.real==rhs.celula.real;
+        if(this->tipo == REAL)
+            return this->celula.real == rhs.celula.real;
+        else
+            return this->celula.inteiro == ((int)(rhs.celula.real));
     }
 }
 
@@ -274,11 +282,17 @@ bool CelulaMemoria::operator>(const CelulaMemoria &rhs)
 {
     if(rhs.tipo == INTEIRO)
     {
-        return this->celula.inteiro>rhs.celula.inteiro;
+        if(this->tipo == INTEIRO)
+            return this->celula.inteiro > rhs.celula.inteiro;
+        else
+            return ((int)(this->celula.real) > rhs.celula.inteiro);
     }
     else
     {
-        return this->celula.real>rhs.celula.real;
+        if(this->tipo == REAL)
+            return this->celula.real > rhs.celula.real;
+        else
+            return this->celula.inteiro > ((int)(rhs.celula.real));
     }
 }
 
@@ -286,11 +300,17 @@ bool CelulaMemoria::operator<(const CelulaMemoria &rhs)
 {
     if(rhs.tipo == INTEIRO)
     {
-        return this->celula.inteiro<rhs.celula.inteiro;
+        if(this->tipo == INTEIRO)
+            return this->celula.inteiro < rhs.celula.inteiro;
+        else
+            return ((int)(this->celula.real) < rhs.celula.inteiro);
     }
     else
     {
-        return this->celula.real<rhs.celula.real;
+        if(this->tipo == REAL)
+            return this->celula.real < rhs.celula.real;
+        else
+            return this->celula.inteiro < ((int)(rhs.celula.real));
     }
 }
 
@@ -298,11 +318,17 @@ bool CelulaMemoria::operator<=(const CelulaMemoria &rhs)
 {
     if(rhs.tipo == INTEIRO)
     {
-        return this->celula.inteiro<=rhs.celula.inteiro;
+        if(this->tipo == INTEIRO)
+            return this->celula.inteiro <= rhs.celula.inteiro;
+        else
+            return ((int)(this->celula.real) <= rhs.celula.inteiro);
     }
     else
     {
-        return this->celula.real<=rhs.celula.real;
+        if(this->tipo == REAL)
+            return this->celula.real <= rhs.celula.real;
+        else
+            return this->celula.inteiro <= ((int)(rhs.celula.real));
     }
 }
 
@@ -310,11 +336,17 @@ bool CelulaMemoria::operator>=(const CelulaMemoria &rhs)
 {
     if(rhs.tipo == INTEIRO)
     {
-        return this->celula.inteiro>=rhs.celula.inteiro;
+        if(this->tipo == INTEIRO)
+            return this->celula.inteiro >= rhs.celula.inteiro;
+        else
+            return ((int)(this->celula.real) >= rhs.celula.inteiro);
     }
     else
     {
-        return this->celula.real>=rhs.celula.real;
+        if(this->tipo == REAL)
+            return this->celula.real >= rhs.celula.real;
+        else
+            return this->celula.inteiro >= ((int)(rhs.celula.real));
     }
 }
 
@@ -322,11 +354,17 @@ bool CelulaMemoria::operator!=(const CelulaMemoria &rhs)
 {
     if(rhs.tipo == INTEIRO)
     {
-        return this->celula.inteiro!=rhs.celula.inteiro;
+        if(this->tipo == INTEIRO)
+            return this->celula.inteiro != rhs.celula.inteiro;
+        else
+            return ((int)(this->celula.real) != rhs.celula.inteiro);
     }
     else
     {
-        return this->celula.real!=rhs.celula.real;
+        if(this->tipo == REAL)
+            return this->celula.real != rhs.celula.real;
+        else
+            return this->celula.inteiro != ((int)(rhs.celula.real));
     }
 }
 
@@ -381,6 +419,7 @@ CelulaMemoria CelulaMemoria::operator~()
 {
     CelulaMemoria r;
     r.celula.inteiro = ~ this->celula.inteiro;
+    r.tipo = INTEIRO;
     return r;
 }
 
@@ -407,13 +446,34 @@ void CelulaMemoria::convToChar()
 CelulaMemoria CelulaMemoria::pot(const CelulaMemoria &rhs)
 {
     CelulaMemoria m;
-    m.celula.real = pow(this->celula.real, this->celula.real);
+    double a, b;
+
+    if(this->tipo == INTEIRO)
+        a = this->celula.inteiro;
+    else
+        a = this->celula.real;
+
+    if(rhs.tipo == INTEIRO)
+        b = rhs.celula.inteiro;
+    else
+        b = rhs.celula.real;
+
+    m.celula.real = pow(a, b);
+    m.tipo = REAL;
     return m;
 }
 CelulaMemoria CelulaMemoria::pot(const double &rhs)
 {
     CelulaMemoria m;
-    m.celula.real = pow(this->celula.real, rhs);
+    double a;
+
+    if(this->tipo == INTEIRO)
+        a = this->celula.inteiro;
+    else
+        a = this->celula.real;
+
+    m.celula.real = pow(a, rhs);
+    m.tipo = REAL;
     return m;
 }
 

@@ -20,6 +20,18 @@ void debug_arvore(No* no, int nivel)
 			cout<<"NO, linha: "<<no->linha<<"\n";
 		}
 		break;
+		case TipoNo::TERMINAR:
+		{
+			imprime_nivel(nivel);
+			cout<<"TERMINAR, linha: "<<no->linha<<"\n";
+		}
+		break;
+		case TipoNo::LIMPAR:
+		{
+			imprime_nivel(nivel);
+			cout<<"LIMPAR, linha: "<<no->linha<<"\n";
+		}
+		break;
 		case TipoNo::EXPRESSAO:
 		{
 			imprime_nivel(nivel);

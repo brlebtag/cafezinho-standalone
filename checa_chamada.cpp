@@ -1,4 +1,4 @@
-#include "semantico.h"
+ #include "semantico.h"
 
 bool checar_chamada(TabelaSimbolo &tabela, No* parametro, No* argumento)
 {

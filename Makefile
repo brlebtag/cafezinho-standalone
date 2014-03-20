@@ -1,9 +1,3 @@
-##################################################
-# MAKEFILE  CAFEZINHO STANDALONE 1.0             #
-# TODOS OS DIRETISO RESERVADOS A BRUNO GABRIEL   #
-# ARAUJO LEBTAG - 2014                           #
-##################################################
-
 CPPFLAGS = -std=c++0x -g
 NOMEPROGRAMA = cafezinho
 COMPILADOR = g++

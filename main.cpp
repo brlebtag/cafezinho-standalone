@@ -22,7 +22,7 @@ void chama_debug_codigo(NBloco *bloco)
 		MaquinaVirtual vm;
 		gerar_codigo(vm, tabela, bloco, 0, 0, 0);
 
-		if(vm.rotulo[0]!=-1)
+		if((*vm.rotulo[0])!=-1)
 		{
 			debug_codigo(vm);
 		}
@@ -56,7 +56,7 @@ void chama_gera_codigo(NBloco *bloco)
 		MaquinaVirtual vm;
 		gerar_codigo(vm, tabela, bloco, 0, 0, 0);
 
-		if(vm.rotulo[0]!=-1)
+		if((*vm.rotulo[0])!=-1)
 		{
 			vm.executar();
 		}
@@ -89,13 +89,15 @@ CelulaMemoria* determina_registrador(MaquinaVirtual &vm, string registrador)
 
 void chama_gera_codigo_debug(NBloco *bloco)
 {
+	chama_analise_semantica(bloco);
+	
 	if(!erro_compilador)
 	{
 		TabelaRef tabela;
 		MaquinaVirtual vm;
 		gerar_codigo(vm, tabela, bloco, 0, 0, 0);
 
-		if(vm.rotulo[0]!=-1)
+		if((*vm.rotulo[0])!=-1)
 		{
 			bool execute = true;
 			bool loop;

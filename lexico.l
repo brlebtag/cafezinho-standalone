@@ -49,7 +49,7 @@ OC 			[0-7]
 						return(INT_CONST); 
 					}
 
-[+-]?0?{D}+			{
+0?{D}+			{
 /* Numero Inteiro */
 						std::stringstream ss;
 						ss<< std::dec << yytext;
@@ -58,21 +58,21 @@ OC 			[0-7]
 						return(INT_CONST);
 					}	
 
-[+-]?{D}+{E}		{
+{D}+{E}		{
 /* Numero real  */		
 						yylval.dval = atof(yytext);
 						ultimo_token = "CONSTANTE REAL";
 						return(REAL_CONST); 
 					}
 
-[+-]?{D}*"."{D}+({E})? {	
+{D}*"."{D}+({E})? {	
 /* Numero real  */
 							yylval.dval = atof(yytext);
 							ultimo_token = "CONSTANTE REAL";
 							return(REAL_CONST); 
 					 	}
 
-[+-]?{D}+"."{D}*({E})?	{
+{D}+"."{D}*({E})?	{
 /* Numero real  */
 							yylval.dval = atof(yytext);
 							ultimo_token = "CONSTANTE REAL";
@@ -139,28 +139,98 @@ OC 			[0-7]
 					}
 				}
 			}
-      
-"["			{
-				yylval.ival = yylineno;
-				ultimo_token = "[";
-				return '[';
-			}
-   
-"]"			{
-				ultimo_token = "]";
-				return ']';
-   			}
 
-"("			{
-				yylval.ival = yylineno;
-				ultimo_token = "(";
-				return '(';
+"**="		{
+				ultimo_token = "**=";
+				return POT_ATRIBUICAO;
 			}
-   
-")"			{
-				ultimo_token = ")";
-				return ')';
-   			}	
+
+">>="		{
+				ultimo_token = ">>=";
+				return DIR_ATRIBUICAO;
+			}			
+
+"<<="		{
+				ultimo_token = "<<=";
+				return ESQ_ATRIBUICAO;
+			}
+
+"+="		{
+				ultimo_token = "+=";
+				return ADICAO_ATRIBUICAO;
+			}
+
+"-="		{
+				ultimo_token = "-=";
+				return SUBTRACAO_ATRIBUICAO;
+			}
+
+"*="		{
+				ultimo_token = "*=";
+				return MULT_ATRIBUICAO;
+			}
+
+"/="		{
+				ultimo_token = "/=";
+				return DIV_ATRIBUICAO;
+			}
+
+"%="		{
+				ultimo_token = "%=";
+				return MOD_ATRIBUICAO;
+			}
+
+"&="		{
+				ultimo_token = "&=";
+				return E_ATRIBUICAO;
+			}
+
+"^="		{
+				ultimo_token = "^=";
+				return XOR_ATRIBUICAO;
+			}
+
+"|="		{
+				ultimo_token = "|=";
+				return OU_ATRIBUICAO;
+			}			
+
+">>"		{
+				ultimo_token = ">>";
+				return DIR_OP;
+			}				
+
+"<<"		{
+				ultimo_token = "<<";
+				return ESQ_OP;
+			}
+
+"++"		{
+				yylval.ival = yylineno;
+				ultimo_token = "++";
+				return INC_OP;
+			}
+
+"--"		{
+				yylval.ival = yylineno;
+				ultimo_token = "--";
+				return DEC_OP;
+			}
+
+"&&"		{
+				ultimo_token = "&&";
+				return E_OP;
+			}
+
+"||"		{
+				ultimo_token = "||";
+				return OU_OP;
+			}
+
+"**"		{
+				ultimo_token = "**";
+				return POT_OP;
+			}			
 
 "<="		{
 				ultimo_token = "<=";
@@ -170,36 +240,6 @@ OC 			[0-7]
 ">="		{
 				ultimo_token = ">=";
 				return GE_OP;
-			}
-
-"<<="		{
-				ultimo_token = "<<=";
-				return ESQ_ATRIBUICAO;
-			}
-
-"<<"		{
-				ultimo_token = "<<";
-				return ESQ_OP;
-			}			
-
-"<"			{
-				ultimo_token = "<";
-				return '<';
-			}
-
-">>="		{
-				ultimo_token = ">>=";
-				return DIR_ATRIBUICAO;
-			}
-
-">>"		{
-				ultimo_token = "<<";
-				return DIR_OP;
-			}
-
-">"			{
-				ultimo_token = "<";
-				return '>';
 			}
 
 "=="		{
@@ -212,20 +252,10 @@ OC 			[0-7]
 				return NE_OP;
 			}
 
-"="			{
-				ultimo_token = "=";
-				return '=';
-			}
-
-","			{
-				ultimo_token = ",";
-				return ',';
-			}
-
 ";"			{
 				ultimo_token = ";";
 				return ';';
-			}
+			}			
 
 "{"			{
 				yylval.ival = yylineno;
@@ -233,10 +263,114 @@ OC 			[0-7]
 				return '{'; 
 			}
 
+","			{
+				ultimo_token = ",";
+				return ',';
+			}			
+
 "}"			{ 	
 				ultimo_token = "}";
 				return '}'; 
 			}
+
+":"			{
+				ultimo_token = ":";
+				return ':';
+			}						
+
+"="			{
+				ultimo_token = "=";
+				return '=';
+			}			
+
+"("			{
+				yylval.ival = yylineno;
+				ultimo_token = "(";
+				return '(';
+			}
+   
+")"			{
+				ultimo_token = ")";
+				return ')';
+			}
+
+"["			{
+				yylval.ival = yylineno;
+				ultimo_token = "[";
+				return '[';
+			}
+   
+"]"			{
+				ultimo_token = "]";
+				return ']';
+   			}
+
+"&"			{
+				ultimo_token = "&";
+				return '&';
+			}
+
+"!"			{
+				ultimo_token = "!";
+				return '!';
+			}
+
+"~"			{
+				ultimo_token = "~";
+				return '~';
+			}			
+
+"-"			{
+				ultimo_token = "-";
+				return '-';
+			}
+
+"+"			{
+				ultimo_token = "+";
+				return '+';
+			}
+
+"*"			{
+				ultimo_token = "*";
+				return '*';
+			}
+				
+"/"			{
+				ultimo_token = "/";
+				return '/';
+			}
+
+"%"			{
+				ultimo_token = "%";
+				return '%';
+			}												
+
+">"			{
+				ultimo_token = ">";
+				return BT_OP;
+			}
+
+"<"			{
+				ultimo_token = "<";
+				return LT_OP;
+			}
+
+"^"			{
+				ultimo_token = "^";
+				return '^';
+			}			
+
+
+"|"			{
+				ultimo_token = "|";
+				return '|';
+			}
+
+"?"			{
+				ultimo_token = "?";
+				return '?';
+			}															
+								
 	
 "'"			{
 				register int a = yyinput(), b=yyinput();
@@ -267,134 +401,6 @@ OC 			[0-7]
 					}
 				}
 					
-			}
-
-"?"			{
-				ultimo_token = "?";
-				return '?';
-			}
-
-":"			{
-				ultimo_token = ":";
-				return ':';
-			}
-
-"+="		{
-				ultimo_token = "+=";
-				return ADICAO_ATRIBUICAO;
-			}			
-
-"++"		{
-				yylval.ival = yylineno;
-				ultimo_token = "++";
-				return INC_OP;
-			}
-
-"+"			{
-				ultimo_token = "+";
-				return '+';
-			}
-
-"-="		{
-				ultimo_token = "-=";
-				return SUBTRACAO_ATRIBUICAO;
-			}
-
-"--"		{
-				yylval.ival = yylineno;
-				ultimo_token = "--";
-				return DEC_OP;
-			}
-
-"-"			{
-				ultimo_token = "-";
-				return '-';
-			}
-
-"*="		{
-				ultimo_token = "*=";
-				return MULT_ATRIBUICAO;
-			}
-
-"**="		{
-				ultimo_token = "**=";
-				return POT_ATRIBUICAO;
-			}
-
-"**"		{
-				ultimo_token = "**";
-				return POT_OP;
-			}
-
-
-"*"			{
-				ultimo_token = "*";
-				return '*';
-			}
-
-"/="		{
-				ultimo_token = "/=";
-				return DIV_ATRIBUICAO;
-			}				
-
-"/"			{
-				ultimo_token = "/";
-				return '/';
-			}
-
-"%="		{
-				ultimo_token = "%=";
-				return MOD_ATRIBUICAO;
-			}
-
-"%"			{
-				ultimo_token = "%";
-				return '%';
-			}
-
-"!"			{
-				ultimo_token = "!";
-				return '!';
-			}
-
-"&="		{
-				ultimo_token = "&=";
-				return E_ATRIBUICAO;
-			}
-
-"&&"		{
-				ultimo_token = "&&";
-				return E_OP;
-			}
-
-"&"			{
-				ultimo_token = "&";
-				return '&';
-			}
-
-"|="		{
-				ultimo_token = "|=";
-				return OU_ATRIBUICAO;
-			}
-
-"||"		{
-				ultimo_token = "||";
-				return OU_OP;
-			}
-
-"|"			{
-				ultimo_token = "|";
-				return '|';
-			}
-
-"^"			{
-				ultimo_token = "^";
-				return '^';
-			}
-
-"^="		{
-				ultimo_token = "^=";
-				return XOR_ATRIBUICAO;
 			}
 
 "nulo"	    {
@@ -479,15 +485,30 @@ OC 			[0-7]
 				return OU_OP;
 			}
 
+"terminar"	{
+				ultimo_token = "terminar";
+				yylval.ival = yylineno;
+				return TERMINAR;
+			}
+
+"limpar"	{
+				ultimo_token = "limpar";
+				yylval.ival = yylineno;
+				return LIMPAR;
+			}
+
 {ID}+ 		{
-				ultimo_token = "IDENTIFICADOR";
+				ultimo_token = "IDENTIFICADOR ";
+				ultimo_token += yytext;
 				yylval.sval = new string(yytext) ;
 				return IDENTIFICADOR;
       		}
 
-[ <<EOF>>\0\t\v\r\n\f]+ 	; /* eat up whitespace */
+
+[ \t\v\r\n\f] ; /* eat up whitespace */
 
 .			{
+				cout<<yytext<<endl;
 				ultimo_token = yytext;
 				yyerror(0, "");
 			}		

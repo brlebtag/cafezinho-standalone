@@ -88,6 +88,12 @@ void imprime_instrucao(MaquinaVirtual &vm, Instrucao * instrucao)
 			cout<<"cmp "<<nome_reg(vm, inst->operando1)<<", "<<nome_reg(vm, inst->operando2)<<"\n";
 		}
 		break;
+		case SALTO:
+		{
+			ISalto *inst = dynamic_cast<ISalto*>(instrucao);
+			cout<<"si "<<inst->offset<<"\n";
+		}
+		break;
 		case SALTO_EQ:
 		{
 			ISaltoEq *inst = dynamic_cast<ISaltoEq*>(instrucao);
@@ -403,10 +409,10 @@ void imprime_instrucao(MaquinaVirtual &vm, Instrucao * instrucao)
 			cout<<"pot "<<nome_reg(vm, inst->registrador)<<", "<<nome_reg(vm, inst->operando1)<<", "<<nome_reg(vm, inst->operando2)<<"\n";
 		}
 		break;
-		case CAST:
+		case SISTEMA:
 		{
-			ICast *inst = dynamic_cast<ICast*>(instrucao);
-			cout<<"cast "<<nome_reg(vm, inst->registrador)<<", "<<nome_tipo_cast(inst->tipo)<<"\n";
+			ISistema *inst = dynamic_cast<ISistema*>(instrucao);
+			cout<<"sis "<<nome_comando(inst->comando)<<"\n";
 		}
 		break;
 	}
@@ -445,4 +451,16 @@ string nome_tipo_cast(TipoVariavel::TipoVariavel tipo)
 		return "CAR";
 
 	return "REAL";
+}
+
+string nome_comando(Sistema::Comando comando)
+{
+	switch(comando)
+	{
+		case Sistema::LIMPAR:
+		{
+			return "limpar";
+		}
+		break;
+	}
 }

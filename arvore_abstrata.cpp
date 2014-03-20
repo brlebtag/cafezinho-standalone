@@ -497,3 +497,25 @@ TipoNo::TipoNo NListaInicializador::tipoNo()
 {
 	return TipoNo::LISTA_INICIALIZADOR;
 }
+
+/***************** Terminar ***************/
+NTerminar::NTerminar(int linha)
+	:NInstrucao(linha) { }
+
+NTerminar::~NTerminar() { }
+
+TipoNo::TipoNo NTerminar::tipoNo()
+{
+	return TipoNo::TERMINAR;
+}
+
+/************** Limpar ********************/
+NLimpar::NLimpar(int linha)
+	:NInstrucao(linha) { }
+	
+NLimpar::~NLimpar() { }
+
+TipoNo::TipoNo NLimpar::tipoNo()
+{
+	return TipoNo::LIMPAR;
+}

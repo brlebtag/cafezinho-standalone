@@ -21,9 +21,9 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				 */
 
 				// rotulo[0] endereco do programa()
-				vm.rotulo.push_back(-1);
+				vm.rotulo.push_back(new int(-1));
 				//rotulo[1] endereco de encerramento do programa...
-				vm.rotulo.push_back(0);
+				vm.rotulo.push_back(new int(0));
 				//Variaveis Globais
 				for(IteradorInstrucao it = bloco->instrucoes->begin(); it!= bloco->instrucoes->end(); ++it)
 				{
@@ -38,8 +38,8 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				//empilho o ponteiro da base da pilha(que funciona como o ponteiro que aponta para o inicio do frame...)
 				empilha(vm, vm.bp);
 				//chama main...
-				invoca(vm, vm.rotulo[0]);
-				vm.rotulo[1] = vm.codigo.size();
+				invoca(vm, (*vm.rotulo[0]));
+				(*vm.rotulo[1]) = vm.codigo.size();
 				if(i>1)
 					dec_pp(vm, i-1);
 				vm.codigo.push_back(new IParar(vm));
@@ -113,12 +113,12 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				//mas o rotulo sempre existe enquato o programa existir...
 				if(func->nome->compare("programa")==0&&func->tipo==TipoVariavel::TIPO_NULO)
 				{
-					vm.rotulo[0] = vm.codigo.size()-1;
+					(*vm.rotulo[0]) = vm.codigo.size()-1;
 					pilha.push(Referencia(no, profundidade, 0));
 				}
 				else
 				{
-					vm.rotulo.push_back(vm.codigo.size()-1);
+					vm.rotulo.push_back(new int(vm.codigo.size()-1));
 					pilha.push(Referencia(no, profundidade, vm.rotulo.size()-1));
 				}
 				tabela.insert(make_pair(func->nome->c_str(), pilha));
@@ -129,18 +129,18 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				//offset da funcao será a posicao da primeira instrucao da funcao dentro de codigo[]
 				if(func->nome->compare("programa")==0&&func->tipo==TipoVariavel::TIPO_NULO)
 				{
-					vm.rotulo[0] = vm.codigo.size()-1;
+					(*vm.rotulo[0]) = vm.codigo.size()-1;
 					it->second.push(Referencia(no, profundidade, 0, false));
 				}
 				else
 				{
-					vm.rotulo.push_back(vm.codigo.size()-1);
+					vm.rotulo.push_back(new int(vm.codigo.size()-1));
 					it->second.push(Referencia(no, profundidade, vm.rotulo.size()-1, false));
 				}
 			}
 
-			// push er
-			vm.codigo.push_back(new ISalva(vm, vm.er, vm.pp));
+			// empilha er
+			empilha(vm, vm.er);
 
 			//Empilha de trás para frente...
 			for(int i= func->parametros->size()-1; i>=0; --i)
@@ -168,7 +168,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 			{
 				move(vm, vm.pp, vm.bp);
 				carrega(vm, vm.er, vm.pp);
-				int qtd = quantidade_alocada(func);
+				int qtd = func->parametros->size();
 				if(qtd>0) 
 				{
 					dec_pp(vm, qtd);
@@ -194,7 +194,23 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 
 			IteradorTabelaRef it = tabela.find(cham->nome->c_str());
 
-			invoca(vm, vm.rotulo[it->second.top().offset]);
+			invoca(vm, (*vm.rotulo[it->second.top().offset]));
+		}
+		break;
+		case TipoNo::RETORNE:
+		{
+			NRetorne *retorno = dynamic_cast<NRetorne*>(no);
+			gerar_codigo(vm, tabela, ultimo_elemento(vm,tabela, retorno->expressao, profundidade, offset, funcao), profundidade, offset, funcao);
+			move(vm, vm.pp, vm.bp);
+			carrega(vm, vm.er, vm.pp);
+			int qtd = dynamic_cast<NDeclaracaoFuncao*>(funcao)->parametros->size();
+			if(qtd>0) 
+			{
+				dec_pp(vm, qtd);
+			}
+			dec_pp(vm, 1);
+			carrega(vm, vm.bp, vm.pp);
+			ret(vm);
 		}
 		break;
 		case TipoNo::IDENTIFICADOR_ESCALAR:
@@ -283,10 +299,10 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 		{
 			NSe *se = dynamic_cast<NSe*>(no);
 			gerar_codigo(vm, tabela, ultimo_elemento(vm,tabela, se->expressao, profundidade, offset, funcao), profundidade, offset, funcao);
-			vm.rotulo.push_back(0);
-			int &sair_se = vm.rotulo[vm.rotulo.size()-1];
+			vm.rotulo.push_back(new int(0));
+			int &sair_se = (*vm.rotulo[vm.rotulo.size()-1]);
 			//salta se nao for igual
-			cmp_imm(vm, vm.eax, CelulaMemoria(0));
+			cmp_imm(vm, vm.eax, 0);
 			seq(vm, sair_se);
 			gerar_codigo(vm, tabela, se->instrucao, profundidade, offset, funcao);
 			//vm.codigo.size() -1 contém a ultima instrucao inserida... logo vm.codigo.size() é a proxima instrucao...
@@ -298,14 +314,14 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 		{
 			NSeSenao* seSenao = dynamic_cast<NSeSenao*>(no);
 			gerar_codigo(vm, tabela, ultimo_elemento(vm,tabela, seSenao->expressao, profundidade, offset, funcao), profundidade, offset, funcao);
-			vm.rotulo.push_back(0);
-			int &senao = vm.rotulo[vm.rotulo.size()-1];
+			vm.rotulo.push_back(new int(0));
+			int &senao = (*vm.rotulo[vm.rotulo.size()-1]);
 			//salta se nao for igual
-			cmp_imm(vm, vm.eax, CelulaMemoria(0));
+			cmp_imm(vm, vm.eax, 0);
 			seq(vm, senao);
 			gerar_codigo(vm, tabela, seSenao->instrucaoSe, profundidade, offset, funcao);
-			vm.rotulo.push_back(0);
-			int &sair_se = vm.rotulo[vm.rotulo.size()-1];
+			vm.rotulo.push_back(new int(0));
+			int &sair_se = (*vm.rotulo[vm.rotulo.size()-1]);
 			si(vm, sair_se);
 			senao = vm.codigo.size();
 			gerar_codigo(vm, tabela, seSenao->instrucaoSenao, profundidade, offset, funcao);
@@ -316,12 +332,12 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 		case TipoNo::ENQUANTO:
 		{
 			NEnquanto *enq = dynamic_cast<NEnquanto*>(no);
-			vm.rotulo.push_back(vm.codigo.size());
-			int &loop = vm.rotulo[vm.rotulo.size()-1];
+			vm.rotulo.push_back(new int(vm.codigo.size()));
+			int &loop = (*vm.rotulo[vm.rotulo.size()-1]);
 			gerar_codigo(vm, tabela, ultimo_elemento(vm,tabela, enq->expressao, profundidade, offset, funcao), profundidade, offset, funcao);
-			vm.rotulo.push_back(0);
-			int &sair_loop = vm.rotulo[vm.rotulo.size()-1];
-			cmp_imm(vm, vm.eax, CelulaMemoria(0));
+			vm.rotulo.push_back(new int(0));
+			int &sair_loop = (*vm.rotulo[vm.rotulo.size()-1]);
+			cmp_imm(vm, vm.eax, 0);
 			seq(vm, sair_loop);
 			gerar_codigo(vm, tabela, enq->instrucao, profundidade, offset, funcao);
 			si(vm, loop);
@@ -332,14 +348,14 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 		{
 			NOperacaoTerciaria *ter = dynamic_cast<NOperacaoTerciaria*>(no);
 			gerar_codigo(vm, tabela, ultimo_elemento(vm,tabela, ter->expressao, profundidade, offset, funcao), profundidade, offset, funcao);
-			vm.rotulo.push_back(0);
-			int &senao = vm.rotulo[vm.rotulo.size()-1];
+			vm.rotulo.push_back(new int(0));
+			int &senao = (*vm.rotulo[vm.rotulo.size()-1]);
 			//salta se nao for igual
 			cmp_imm(vm, vm.eax, CelulaMemoria(0));
 			seq(vm, senao);
 			gerar_codigo(vm, tabela, ultimo_elemento(vm,tabela, ter->ifExpr, profundidade, offset, funcao), profundidade, offset, funcao);
-			vm.rotulo.push_back(0);
-			int &sair_se = vm.rotulo[vm.rotulo.size()-1];
+			vm.rotulo.push_back(new int(0));
+			int &sair_se = (*vm.rotulo[vm.rotulo.size()-1]);
 			si(vm, sair_se);
 			senao = vm.codigo.size();
 			gerar_codigo(vm, tabela, ultimo_elemento(vm,tabela, ter->elsExpr, profundidade, offset, funcao), profundidade, offset, funcao);
@@ -612,22 +628,6 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				
 		}
 		break;
-		case TipoNo::RETORNE:
-		{
-			NRetorne *retorno = dynamic_cast<NRetorne*>(no);
-			gerar_codigo(vm, tabela, ultimo_elemento(vm,tabela, retorno->expressao, profundidade, offset, funcao), profundidade, offset, funcao);
-			move(vm, vm.pp, vm.bp);
-			carrega(vm, vm.er, vm.pp);
-			int qtd = quantidade_alocada(funcao);
-			if(qtd>0) 
-			{
-				dec_pp(vm, qtd);
-			}
-			dec_pp(vm, 1);
-			carrega(vm, vm.bp, vm.pp);
-			ret(vm);
-		}
-		break;
 		case TipoNo::LEIA:
 		{
 			NLeia *leia = dynamic_cast<NLeia*>(no);
@@ -708,6 +708,20 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 			}
 		}
 		break;
+		case TipoNo::TERMINAR:
+		{
+			//terminar o programa...
+			vm.codigo.push_back(new ISalto(vm, (*vm.rotulo[1])));
+
+		}
+		break;
+		case TipoNo::LIMPAR:
+		{
+			//terminar o programa...
+			vm.codigo.push_back(new ISistema(vm, Sistema::LIMPAR));
+
+		}
+		break;
 		case TipoNo::INICIALIZADOR_VETOR:
 		{
 			NInicializadorVetor *list = dynamic_cast<NInicializadorVetor*>(no);
@@ -726,6 +740,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 		case TipoNo::CAST:
 		{
 			NCast *cast = dynamic_cast<NCast*>(no);
+			gerar_codigo(vm, tabela, cast->expressao, profundidade, offset, funcao);
 			vm.codigo.push_back(new ICast(vm, vm.eax, cast->tipo));
 		}
 		break;

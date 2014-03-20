@@ -35,7 +35,12 @@ void cmp(MaquinaVirtual &vm, CelulaMemoria &op1, CelulaMemoria &op2)
 
 void cmp_imm(MaquinaVirtual &vm, CelulaMemoria &op1, CelulaMemoria op2)
 {
-	vm.codigo.push_back(new ICmp(vm, op1, op2));
+	vm.codigo.push_back(new ICmpIm(vm, op1, op2));
+}
+
+void cmp_imm(MaquinaVirtual &vm, CelulaMemoria &op1, int op2)
+{
+	vm.codigo.push_back(new ICmpIm(vm, op1, op2));
 }
 
 void seq(MaquinaVirtual &vm, int &offset)
