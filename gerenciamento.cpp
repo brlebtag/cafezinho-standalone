@@ -36,18 +36,18 @@ void gerar_indice(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 
 	//Se for diferente de 1 dimensão. obs j = dimensao -1 logo tem q ser j>0 e n j>1
 	if(var->dimensoes->size()>1)
-		vm.codigo.push_back(new IMove(vm, vm.ebx, vm.eax));
+		vm.codigo.push_back(new IMove(vm.ebx, vm.eax));
 	
 	for(int i = ident->indice->size()-2; i>=0; --i, --j)
 	{
 		dimensao *= dynamic_cast<NInteiro*>(var->dimensoes->at(j))->valor;
 		gerar_codigo(vm, tabela, ultimo_elemento(vm, tabela, ident->indice->at(i), profundidade, offset, funcao) , profundidade, offset, funcao);
-		vm.codigo.push_back(new IMultIm(vm, vm.eax, vm.eax, CelulaMemoria(dimensao)));
-		vm.codigo.push_back(new IAdc(vm, vm.ebx, vm.eax, vm.ebx));
+		vm.codigo.push_back(new IMultIm(vm.eax, vm.eax, CelulaMemoria(dimensao)));
+		vm.codigo.push_back(new IAdc(vm.ebx, vm.eax, vm.ebx));
 	}
 	//Se for diferente de 1 dimensão. obs j = dimensao -1 logo tem q ser j>0 e n j>1
 	if(var->dimensoes->size()>1)
-		vm.codigo.push_back(new IMove(vm, vm.eax, vm.ebx));
+		vm.codigo.push_back(new IMove(vm.eax, vm.ebx));
 }
 
 void gerar_atribuicao(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidade, int offset, No* funcao)
@@ -61,17 +61,17 @@ void gerar_atribuicao(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profund
 
 		if(ref.profundidade == 0)
 		{
-			vm.codigo.push_back(new ISalva(vm, vm.ebx, vm.pg, ref.offset));
+			vm.codigo.push_back(new ISalva(vm.ebx, vm.pg, ref.offset));
 		}
 		else
 		{
 			if(ref.parametro)
 			{
-				vm.codigo.push_back(new ISalva(vm, vm.ebx, vm.bp, -ref.offset));
+				vm.codigo.push_back(new ISalva(vm.ebx, vm.bp, -ref.offset));
 			}
 			else
 			{
-				vm.codigo.push_back(new ISalva(vm, vm.ebx, vm.bp, ref.offset));
+				vm.codigo.push_back(new ISalva(vm.ebx, vm.bp, ref.offset));
 			}
 		}
 	}
@@ -86,33 +86,33 @@ void gerar_atribuicao(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profund
 		if(ref.profundidade == 0)
 		{
 			// ecx = pg + offset(do vetor alocado)
-			vm.codigo.push_back(new IAdcIm(vm, vm.ecx, vm.pg, ref.offset));
+			vm.codigo.push_back(new IAdcIm(vm.ecx, vm.pg, ref.offset));
 			// eax = ecx + vm.eax(eax contém o deslocamento dentro do vetor)
-			vm.codigo.push_back(new IAdc(vm, vm.eax, vm.ecx, vm.eax));
+			vm.codigo.push_back(new IAdc(vm.eax, vm.ecx, vm.eax));
 		}
 		else
 		{
 			if(ref.parametro)
 			{
 				// ecx = bp - ref.offset( - ref.offset é o lucar onde aquele parametro está com relacao a bp)
-				vm.codigo.push_back(new ISubIm(vm, vm.ecx, vm.bp, ref.offset));
+				vm.codigo.push_back(new ISubIm(vm.ecx, vm.bp, ref.offset));
 				//carrega o valor que está em [ecx] que é o endereco do vetor pq é um ponteiro para o vetor...
-				vm.codigo.push_back(new ICarrega(vm, vm.ecx, vm.ecx));
+				vm.codigo.push_back(new ICarrega(vm.ecx, vm.ecx));
 				// apartir de encerreco soma o deslocamento dentro do vetor...
-				vm.codigo.push_back(new IAdc(vm, vm.eax, vm.ecx, vm.eax));
+				vm.codigo.push_back(new IAdc(vm.eax, vm.ecx, vm.eax));
 			}
 			else
 			{
 				// ecx = bp + offset(do vetor alocado)
-				vm.codigo.push_back(new IAdcIm(vm, vm.ecx, vm.bp, ref.offset));
+				vm.codigo.push_back(new IAdcIm(vm.ecx, vm.bp, ref.offset));
 				// eax = ecx + vm.eax(eax contém o deslocamento dentro do vetor)
-				vm.codigo.push_back(new IAdc(vm, vm.eax, vm.ecx, vm.eax));
+				vm.codigo.push_back(new IAdc(vm.eax, vm.ecx, vm.eax));
 			}
 		}
 		
 		desempilha(vm, vm.ebx);
 
 		// vm.memoria[vm.eax] = vm.ebx
-		vm.codigo.push_back(new ISalva(vm, vm.ebx, vm.eax));
+		vm.codigo.push_back(new ISalva(vm.ebx, vm.eax));
 	}
 }

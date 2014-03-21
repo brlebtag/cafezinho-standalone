@@ -42,7 +42,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				(*vm.rotulo[1]) = vm.codigo.size();
 				if(i>1)
 					dec_pp(vm, i-1);
-				vm.codigo.push_back(new IParar(vm));
+				vm.codigo.push_back(new IParar());
 
 				//Funcoes.. ou atribuicoes...
 				for(IteradorInstrucao it = bloco->instrucoes->begin(); it!= bloco->instrucoes->end(); ++it)
@@ -226,33 +226,33 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				if(ref.vetor)
 				{
 					//carrega endereço de Ident[0] em eax
-					vm.codigo.push_back(new IMoveIm(vm, vm.eax, CelulaMemoria(ref.offset)));
+					vm.codigo.push_back(new IMoveIm(vm.eax, CelulaMemoria(ref.offset)));
 					// adiciona pg + eax 
-					vm.codigo.push_back(new IAdc(vm, vm.eax, vm.pg, vm.eax));
+					vm.codigo.push_back(new IAdc(vm.eax, vm.pg, vm.eax));
 				}
 				else
 				{
-					vm.codigo.push_back(new ICarrega(vm, vm.eax, vm.pg, ref.offset));
+					vm.codigo.push_back(new ICarrega(vm.eax, vm.pg, ref.offset));
 				}
 			}
 			else
 			{
 				if(ref.parametro)
 				{
-					vm.codigo.push_back(new ICarrega(vm, vm.eax, vm.bp, (-ref.offset)));
+					vm.codigo.push_back(new ICarrega(vm.eax, vm.bp, (-ref.offset)));
 				}
 				else
 				{
 					if(ref.vetor)
 					{
 						//carrega endereço de Ident[0] em eax
-						vm.codigo.push_back(new IMoveIm(vm, vm.eax, CelulaMemoria(ref.offset)));
+						vm.codigo.push_back(new IMoveIm(vm.eax, CelulaMemoria(ref.offset)));
 						// adiciona bp + eax 
-						vm.codigo.push_back(new IAdc(vm, vm.eax, vm.bp, vm.eax));
+						vm.codigo.push_back(new IAdc(vm.eax, vm.bp, vm.eax));
 					}
 					else
 					{
-						vm.codigo.push_back(new ICarrega(vm, vm.eax, vm.bp, ref.offset));
+						vm.codigo.push_back(new ICarrega(vm.eax, vm.bp, ref.offset));
 					}
 				}
 			}
@@ -270,29 +270,29 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 
 			// em eax está o valor de deslocamento do vetor, etc: a[valor]
 			// ebx = eax
-			vm.codigo.push_back( new IMove(vm, vm.ebx, vm.eax));
+			vm.codigo.push_back( new IMove(vm.ebx, vm.eax));
 
 			if(ref.profundidade == 0)
 			{
 				//carrega endereço de Ident[0] em eax
-				vm.codigo.push_back(new IMoveIm(vm, vm.eax, CelulaMemoria(ref.offset)));
+				vm.codigo.push_back(new IMoveIm(vm.eax, ref.offset));
 				// adiciona pg + eax 
-				vm.codigo.push_back(new IAdc(vm, vm.eax, vm.pg, vm.eax));
+				vm.codigo.push_back(new IAdc(vm.eax, vm.pg, vm.eax));
 			}
 			else
 			{
 				if(ref.parametro)
 				{
-					vm.codigo.push_back(new ICarrega(vm, vm.eax, vm.bp, (-ref.offset)));
+					vm.codigo.push_back(new ICarrega(vm.eax, vm.bp, (-ref.offset)));
 				}
 				else
 				{
-					vm.codigo.push_back(new IAdcIm(vm, vm.eax, vm.bp, CelulaMemoria(ref.offset)));
+					vm.codigo.push_back(new IAdcIm(vm.eax, vm.bp, ref.offset));
 				}
 			}
 
-			vm.codigo.push_back(new IAdc(vm, vm.eax, vm.eax, vm.ebx));
-			vm.codigo.push_back(new ICarrega(vm, vm.eax, vm.eax));
+			vm.codigo.push_back(new IAdc(vm.eax, vm.eax, vm.ebx));
+			vm.codigo.push_back(new ICarrega(vm.eax, vm.eax));
 		}
 		break;
 		case TipoNo::SE:
@@ -374,19 +374,19 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				case Operador::NEG_OP:
 				{
 					// ~eax ou ! eax
-					vm.codigo.push_back(new INaoBit(vm, vm.eax, vm.eax));
+					vm.codigo.push_back(new INaoBit(vm.eax, vm.eax));
 				}
 				break;
 				case Operador::Operador::MIN_OP:
 				{
 					// -eax
-					vm.codigo.push_back(new INeg(vm, vm.eax, vm.eax));
+					vm.codigo.push_back(new INeg(vm.eax, vm.eax));
 				}
 				break;
 				case Operador::INC_POS_OP:
 				{
 					//salva ebx = eax +1
-					vm.codigo.push_back(new IAdcIm(vm, vm.ebx, vm.eax, CelulaMemoria(1)));
+					vm.codigo.push_back(new IAdcIm(vm.ebx, vm.eax, CelulaMemoria(1)));
 					gerar_atribuicao(vm, tabela, r, profundidade, offset, funcao);
 					//mas retorna apenas eax...
 				}
@@ -394,7 +394,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				case Operador::DEC_POS_OP:
 				{
 					//salva ebx = eax -1
-					vm.codigo.push_back(new ISubIm(vm, vm.ebx, vm.eax, CelulaMemoria(1)));
+					vm.codigo.push_back(new ISubIm(vm.ebx, vm.eax, CelulaMemoria(1)));
 					gerar_atribuicao(vm, tabela, r, profundidade, offset, funcao);
 					//mas retorna apenas eax...
 				}
@@ -402,8 +402,8 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				case Operador::INC_PRE_OP:
 				{
 					//salva ebx = eax +1
-					vm.codigo.push_back(new IAdcIm(vm, vm.ebx, vm.eax, CelulaMemoria(1)));
-					vm.codigo.push_back(new IMove(vm, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IAdcIm(vm.ebx, vm.eax, CelulaMemoria(1)));
+					vm.codigo.push_back(new IMove(vm.eax, vm.ebx));
 					gerar_atribuicao(vm, tabela, r, profundidade, offset, funcao);
 					// e retorna eax= ebx
 				}
@@ -411,8 +411,8 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				case Operador::DEC_PRE_OP:
 				{
 					//salva ebx = eax -1
-					vm.codigo.push_back(new ISubIm(vm, vm.ebx, vm.eax, CelulaMemoria(1)));
-					vm.codigo.push_back(new IMove(vm, vm.eax, vm.ebx));
+					vm.codigo.push_back(new ISubIm(vm.ebx, vm.eax, CelulaMemoria(1)));
+					vm.codigo.push_back(new IMove(vm.eax, vm.ebx));
 					gerar_atribuicao(vm, tabela, r, profundidade, offset, funcao);
 					// e retorna eax= ebx
 				}
@@ -432,105 +432,105 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 			{
 				case Operador::EQ_OP:
 				{
-					vm.codigo.push_back(new ILigEq(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new ILigEq(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::OU_OP:
 				{
 					// Zero = falso
 					// Diferente de Zero = verdadeiro
-					vm.codigo.push_back(new IBoolean(vm, vm.eax));
-					vm.codigo.push_back(new IBoolean(vm, vm.ebx));
-					vm.codigo.push_back(new IOuBit(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IBoolean(vm.eax));
+					vm.codigo.push_back(new IBoolean(vm.ebx));
+					vm.codigo.push_back(new IOuBit(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::E_OP:
 				{
 					// Zero = falso
 					// Diferente de Zero = verdadeiro
-					vm.codigo.push_back(new IBoolean(vm, vm.eax));
-					vm.codigo.push_back(new IBoolean(vm, vm.ebx));
-					vm.codigo.push_back(new IEBit(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IBoolean(vm.eax));
+					vm.codigo.push_back(new IBoolean(vm.ebx));
+					vm.codigo.push_back(new IEBit(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::OU_BIT_OP:
 				{
-					vm.codigo.push_back(new IOuBit(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IOuBit(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::E_BIT_OP:
 				{
-					vm.codigo.push_back(new IEBit(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IEBit(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::XOR_BIT_OP:
 				{
-					vm.codigo.push_back(new IXorBit(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IXorBit(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::NE_OP:
 				{
-					vm.codigo.push_back(new ILigNaoEq(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new ILigNaoEq(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::BT_OP:
 				{
-					vm.codigo.push_back(new ILigMaiorQ(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new ILigMaiorQ(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::LT_OP:
 				{
-					vm.codigo.push_back(new ILigMenorQ(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new ILigMenorQ(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::SOM_OP:
 				{
-					vm.codigo.push_back(new IAdc(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IAdc(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::SUB_OP:
 				{
-					vm.codigo.push_back(new ISub(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new ISub(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::MULT_OP:
 				{
-					vm.codigo.push_back(new IMult(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IMult(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::DIV_OP:
 				{
-					vm.codigo.push_back(new IDiv(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IDiv(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::REST_OP:
 				{
-					vm.codigo.push_back(new IResto(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IResto(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::LE_OP:
 				{
-					vm.codigo.push_back(new ILigMenorEq(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new ILigMenorEq(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::GE_OP:
 				{
-					vm.codigo.push_back(new ILigMaiorEq(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new ILigMaiorEq(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::ESQ_OP:
 				{
-					vm.codigo.push_back(new IShiftEsq(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IShiftEsq(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::DIR_OP:
 				{
-					vm.codigo.push_back(new IShiftDir(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IShiftDir(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::POT_OP:
 				{
-					vm.codigo.push_back(new IPotencia(vm, vm.eax, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IPotencia(vm.eax, vm.eax, vm.ebx));
 				}
 				break;
 			}
@@ -569,57 +569,57 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 			{
 				case Operador::MULT_ATRIBUICAO:
 				{
-					vm.codigo.push_back(new IMult(vm, vm.ebx, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IMult(vm.ebx, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::DIV_ATRIBUICAO:
 				{
-					vm.codigo.push_back(new IDiv(vm, vm.ebx, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IDiv(vm.ebx, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::MOD_ATRIBUICAO:
 				{
-					vm.codigo.push_back(new IResto(vm, vm.ebx, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IResto(vm.ebx, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::ADICAO_ATRIBUICAO:
 				{
-					vm.codigo.push_back(new IAdc(vm, vm.ebx, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IAdc(vm.ebx, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::SUBTRACAO_ATRIBUICAO:
 				{
-					vm.codigo.push_back(new ISub(vm, vm.ebx, vm.eax, vm.ebx));
+					vm.codigo.push_back(new ISub(vm.ebx, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::ESQ_ATRIBUICAO:
 				{
-					vm.codigo.push_back(new IShiftEsq(vm, vm.ebx, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IShiftEsq(vm.ebx, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::DIR_ATRIBUICAO:
 				{
-					vm.codigo.push_back(new IShiftDir(vm, vm.ebx, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IShiftDir(vm.ebx, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::E_ATRIBUICAO:
 				{
-					vm.codigo.push_back(new IEBit(vm, vm.ebx, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IEBit(vm.ebx, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::XOR_ATRIBUICAO:
 				{
-					vm.codigo.push_back(new IXorBit(vm, vm.ebx, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IXorBit(vm.ebx, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::OU_ATRIBUICAO:
 				{
-					vm.codigo.push_back(new IOuBit(vm, vm.ebx, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IOuBit(vm.ebx, vm.eax, vm.ebx));
 				}
 				break;
 				case Operador::POT_ATRIBUICAO:
 				{
-					vm.codigo.push_back(new IPotencia(vm, vm.ebx, vm.eax, vm.ebx));
+					vm.codigo.push_back(new IPotencia(vm.ebx, vm.eax, vm.ebx));
 				}
 				break;
 			}
@@ -647,17 +647,17 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				{
 					case TipoVariavel::TIPO_CAR:
 					{
-						vm.codigo.push_back(new ILeituraCar(vm, vm.ebx));
+						vm.codigo.push_back(new ILeituraCar(vm.ebx));
 					}
 					break;
 					case TipoVariavel::TIPO_INT:
 					{
-						vm.codigo.push_back(new ILeituraInt(vm, vm.ebx));
+						vm.codigo.push_back(new ILeituraInt(vm.ebx));
 					}
 					break;
 					case TipoVariavel::TIPO_REAL:
 					{
-						vm.codigo.push_back(new ILeituraReal(vm, vm.ebx));
+						vm.codigo.push_back(new ILeituraReal(vm.ebx));
 					}
 					break;
 				}
@@ -681,17 +681,17 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 				{
 					case TipoVariavel::TIPO_CAR:
 					{
-						vm.codigo.push_back(new IEscritaChar(vm, vm.eax));
+						vm.codigo.push_back(new IEscritaChar(vm.eax));
 					}
 					break;
 					case TipoVariavel::TIPO_INT:
 					{
-						vm.codigo.push_back(new IEscritaInt(vm, vm.eax));
+						vm.codigo.push_back(new IEscritaInt(vm.eax));
 					}
 					break;
 					case TipoVariavel::TIPO_REAL:
 					{
-						vm.codigo.push_back(new IEscritaDouble(vm, vm.eax));
+						vm.codigo.push_back(new IEscritaDouble(vm.eax));
 					}
 					break;
 				}
@@ -711,14 +711,14 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 		case TipoNo::TERMINAR:
 		{
 			//terminar o programa...
-			vm.codigo.push_back(new ISalto(vm, (*vm.rotulo[1])));
+			vm.codigo.push_back(new ISalto((*vm.rotulo[1])));
 
 		}
 		break;
 		case TipoNo::LIMPAR:
 		{
 			//terminar o programa...
-			vm.codigo.push_back(new ISistema(vm, Sistema::LIMPAR));
+			vm.codigo.push_back(new ISistema(Sistema::LIMPAR));
 
 		}
 		break;
@@ -734,35 +734,35 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 			NNovaLinha *novalinha = dynamic_cast<NNovaLinha*>(no);
 			
 			// echo palavra
-			vm.codigo.push_back(new IEscritaPalavraIm(vm, novalinha->valor));
+			vm.codigo.push_back(new IEscritaPalavraIm(novalinha->valor));
 		}
 		break;
 		case TipoNo::CAST:
 		{
 			NCast *cast = dynamic_cast<NCast*>(no);
 			gerar_codigo(vm, tabela, cast->expressao, profundidade, offset, funcao);
-			vm.codigo.push_back(new ICast(vm, vm.eax, cast->tipo));
+			vm.codigo.push_back(new ICast(vm.eax, cast->tipo));
 		}
 		break;
 		case TipoNo::INTEIRO:
 		{
 			NInteiro *cons = dynamic_cast<NInteiro*>(no);
 			// mv eax, IMM
-			vm.codigo.push_back(new IMoveIm(vm, vm.eax, cons->valor));
+			vm.codigo.push_back(new IMoveIm(vm.eax, cons->valor));
 		}
 		break;
 		case TipoNo::CARACTER:
 		{
 			NCaracter *cons = dynamic_cast<NCaracter*>(no);
 			// mv eax, IMM
-			vm.codigo.push_back(new IMoveIm(vm, vm.eax, cons->valor));
+			vm.codigo.push_back(new IMoveIm(vm.eax, cons->valor));
 		}
 		break;
 		case TipoNo::REAL:
 		{
 			NReal *cons = dynamic_cast<NReal*>(no);
 			// mv eax, IMM
-			vm.codigo.push_back(new IMoveIm(vm, vm.eax, cons->valor));
+			vm.codigo.push_back(new IMoveIm(vm.eax, cons->valor));
 		}
 		break;
 		case TipoNo::PALAVRA_LITERAL:
@@ -770,7 +770,7 @@ void gerar_codigo(MaquinaVirtual &vm, TabelaRef &tabela, No *no, int profundidad
 			NPalavraLiteral *cons = dynamic_cast<NPalavraLiteral*>(no);
 
 			// echo palavra
-			vm.codigo.push_back(new IEscritaPalavraIm(vm, cons->valor));
+			vm.codigo.push_back(new IEscritaPalavraIm(cons->valor));
 		}
 		break;
 	}

@@ -53,7 +53,7 @@ void MaquinaVirtual::executar()
     {
         try
         {
-            codigo[pc]->execute();
+            codigo[pc]->execute(*this);
         }
         catch(exception &e)
         {
@@ -79,7 +79,7 @@ void MaquinaVirtual::passo()
     {
         try
         {
-            codigo[pc]->execute();
+            codigo[pc]->execute(*this);
         }
         catch(exception &e)
         {

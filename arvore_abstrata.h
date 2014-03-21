@@ -123,7 +123,9 @@ namespace TipoNo
 		CAST,
 		LISTA_EXPRESSOES,
 		INICIALIZADOR_VETOR,
-		LISTA_INICIALIZADOR
+		LISTA_INICIALIZADOR,
+		TERMINAR,
+		LIMPAR
 	};
 }
 
@@ -442,6 +444,22 @@ public:
 	ListaExpressao* expressoes;
 	NListaInicializador(ListaExpressao* expressoes = 0, int linha = 0);
 	virtual ~NListaInicializador();
+	virtual TipoNo::TipoNo tipoNo();
+};
+
+class NTerminar : public NInstrucao
+{
+public:
+	NTerminar(int linha = 0);
+	virtual ~NTerminar();
+	virtual TipoNo::TipoNo tipoNo();
+};
+
+class NLimpar : public NInstrucao
+{
+public:
+	NLimpar(int linha = 0);
+	virtual ~NLimpar();
 	virtual TipoNo::TipoNo tipoNo();
 };
 

@@ -30,11 +30,11 @@ void gerar_inicializador(MaquinaVirtual &vm, TabelaRef &tabela, NInicializadorVe
 				if(ref.profundidade == 0)
 				{
 					// ebx = pg + offset(inicial) + i
-					vm.codigo.push_back(new ISalva(vm, vm.eax, vm.pg, indice));
+					vm.codigo.push_back(new ISalva(vm.eax, vm.pg, indice));
 				}
 				else
 				{
-					vm.codigo.push_back(new ISalva(vm, vm.eax, vm.bp, indice));
+					vm.codigo.push_back(new ISalva(vm.eax, vm.bp, indice));
 				}
 
 				++indice;

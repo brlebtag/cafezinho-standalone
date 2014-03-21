@@ -348,4 +348,8 @@ int main(int argc, char *argv[])
 
 		delete bloco;
 	}
+	else
+	{
+		cout<<"Nenhum arquivo informado!\n";
+	}
 } 
