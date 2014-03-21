@@ -7,6 +7,7 @@
 #include <vector>
 #include "arvore_abstrata.h"
 #include "simbolo.h"
+#include <sstream>
 
 
 extern int erro_compilador;

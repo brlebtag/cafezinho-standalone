@@ -67,6 +67,11 @@ string tipo_no(No * no)
 			return "PALAVRA LITERAL";
 		}
 		break;
+		case IDENTIFICADOR_ESCALAR:
+		{
+			return "IDENTIFICADOR ESCALAR";
+		}
+		break;
 		case IDENTIFICADOR_VETORIAL:
 		{
 			return "IDENTIFICADOR VETORIAL";
@@ -110,6 +115,31 @@ string tipo_no(No * no)
 		case CAST:
 		{
 			return "CAST";
+		}
+		break;
+		case DECLARACAO_FUNCAO:
+		{
+			return "DECLARACAO DE FUNCAO";
+		}
+		break;
+		case DECLARACAO_VARIAVEL_ESCALAR:
+		{
+			return "DECLARACAO DE VARIAVEL ESCALAR";
+		}
+		break;
+		case DECLARACAO_VARIAVEL_VETORIAL:
+		{
+			return "DECLARACAO DE VARIAVEL VETORIAL";
+		}
+		break;
+		case EXPRESSAO:
+		{
+			return "EXPRESSAO";
+		}
+		break;
+		case LISTA_EXPRESSOES:
+		{
+			return "LISTA DE EXPRESSOES";
 		}
 		break;
 	}
