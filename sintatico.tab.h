@@ -105,7 +105,7 @@ typedef union YYSTYPE
 {
 
 /* Line 2068 of yacc.c  */
-#line 29 "sintatico.y"
+#line 30 "sintatico.y"
 
 	int ival;
     std::string *sval;

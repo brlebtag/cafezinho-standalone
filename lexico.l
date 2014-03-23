@@ -10,7 +10,7 @@
 
 extern void yyerror(NBloco * bloco, const char *s);
 
-int linha = 1;
+extern bool erro_lexico;
 
 using namespace std;
 
@@ -93,7 +93,8 @@ OC 			[0-7]
 					}
 					if ( c == EOF )
 					{
-						yyerror(0, "ERRO COMENTARIO NAO TERMINA " );
+						erro_lexico = true;
+						yyerror(0, "COMENTARIO NAO TERMINA" );
 						break;
 					}
 				}
@@ -114,7 +115,8 @@ OC 			[0-7]
 						c = yyinput();
 						if(c==EOF)
 						{
-							yyerror(0, "ERRO CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA " );
+							erro_lexico = true;
+							yyerror(0, "CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA" );
 							break;
 						}
 						else
@@ -129,12 +131,14 @@ OC 			[0-7]
 					}
 					if( c == '\n')
 					{
-						yyerror(0, "ERRO CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA " );
+						erro_lexico = true;
+						yyerror(0, "CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA" );
 						break;
 					}
 					if ( c == EOF )
 					{
-						yyerror(0, "ERRO CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA " );
+						erro_lexico = true;
+						yyerror(0, "CADEIA DE CARACTERES OCUPA MAIS DE UMA LINHA" );
 						break;
 					}
 				}
@@ -391,13 +395,15 @@ OC 			[0-7]
 				}
 				else
 				{
+					erro_lexico = true;
+
 					if(a=='\'')
 					{
-						yyerror(0, "ERRO CONSTANTE CARACTERE VAZIA " );
+						yyerror(0, "CONSTANTE CARACTERE VAZIA" );
 					}
 					else
 					{
-						yyerror(0, "ERRO ESTOURO DE CONSTANTE CARACTERE " );
+						yyerror(0, "ESTOURO DE CONSTANTE CARACTERE" );
 					}
 				}
 					
@@ -508,9 +514,11 @@ OC 			[0-7]
 [ \t\v\r\n\f] ; /* eat up whitespace */
 
 .			{
-				cout<<yytext<<endl;
 				ultimo_token = yytext;
-				yyerror(0, "");
+				erro_lexico = true;
+				string erro = "JUNTO AO TOKEN ";
+				erro+=yytext;
+				yyerror(0, erro.c_str());
 			}		
 
 %%

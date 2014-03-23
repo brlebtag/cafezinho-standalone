@@ -17,7 +17,8 @@ extern "C" int yylex();
 extern "C" FILE *yyin;
 extern int yylineno;
 extern std::string ultimo_token;
-int erro_compilador = false;
+bool erro_compilador = false;
+bool erro_lexico = false;
 using namespace std;
 
 void yyerror(NBloco * bloco, const char *s);
@@ -528,8 +529,15 @@ bool checa_vetor(ListaExpressao *dimensao, ListaExpressao *lista, int indice, in
 
 void yyerror(NBloco * bloco, const char *s)
 {
-	//cout<<s<<endl<<yylineno<<endl;
-    cout<<"ERRO SINTATICO JUNTO AO TOKEN "<<ultimo_token<<" PERTO DE "<<yylineno<<endl;
-    erro_compilador = true;
-    exit(1);
+	if(!erro_lexico)
+	{
+		cout<<"ERRO SINTATICO JUNTO AO TOKEN "<<ultimo_token<<" PERTO DE "<<yylineno<<endl;
+    	erro_compilador = true;
+	}
+	else
+	{
+		cout<<"ERRO SEMANTICO "<<s<<" PERTO DE "<<yylineno<<endl;
+    	erro_compilador = true;
+    	erro_lexico = false;
+	}
 }
