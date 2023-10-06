@@ -1,5 +1,2 @@
 # cafezinho-standalone
-My Undergraduate Final Term's project
-
-
-Cafezinho Standalone is a register-based virtual machine for Cafezinho language.
+Cafezinho Standalone is a register-based virtual machine for Cafezinho language for my undergraduate final term's project.
